@@ -1,0 +1,72 @@
+body.about {
+  background-color: #f6f0e2;
+  font-family: Helvetica, sans-serif;
+  font-size: 20pt;
+}
+
+h1.about_title {
+  display: flex;
+  justify-content: center;
+}
+
+div.about_surround {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+img.about {
+
+}
+
+div.about_button {
+  margin-top: 20pt;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500pt;
+  width: 1270pt;
+}
+
+button.backMain {
+  width: 100pt;
+  height: 50pt;
+  font-size: 18pt;
+  font: Helvetica, sans-serif;
+  background-color: #e5756a;
+  border-radius: 8pt;
+}
+
+
+div.ethan {
+  display: flex;
+  flex-direction: column;
+  border: 2pt solid black;
+  border-radius: 15pt;
+  padding: 10pt;
+  margin-right: 25pt;
+  margin-left: 10pt;
+  float: left;
+}
+
+div.noah {
+  display: flex;
+  flex-direction: column;
+  border: 2pt solid black;
+  border-radius: 15pt;
+  padding: 10pt;
+  margin-right: 25pt;
+  /* margin-left: 10pt; */
+  float: left;
+}
+
+div.jason {
+  display: flex;
+  flex-direction: column;
+  border: 2pt solid black;
+  border-radius: 15pt;
+  padding: 10pt;
+  margin-right: 10pt;
+  /* margin-left: 10pt; */
+  float: left;
+}
