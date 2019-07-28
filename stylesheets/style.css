@@ -34,8 +34,13 @@
   font: Helvetica, sans-serif;
   background-color: #e5756a;
   border-radius: 8pt;
+  transition: background-color 0.5s ease-out; 
 }
 
+.backMain:hover {
+  background-color: #dead3a ;
+  cursor: pointer;
+}
 
 .ethan {
   display: flex;
