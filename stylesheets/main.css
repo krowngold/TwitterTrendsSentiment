@@ -4,21 +4,24 @@
 
 
 
-.content {
+/* .content {
   text-align: center;
-}
+} */
 
 .search_location {
-  margin-left: 1000px;
+  text-align: right;
 }
 
 .trends {
-  text-align: center;
   width: 300px;
   height: 800px;
+  text-align: center;
   border: 5px solid black;
   border-radius: 15px;
+}
 
+.summary {
+  border-radius: 2px solid blue;
 }
 
 
@@ -27,7 +30,9 @@
 
 
 
-
+.about_the_creators {
+  text-align: center;
+}
 
 .backMain {
   text-align: center;
