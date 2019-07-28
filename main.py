@@ -3,6 +3,26 @@ import logging
 import jinja2
 import os
 import json
+# import tweepy not sure how this one works
+# from twitter import twitter
+# from TwitterAPI import TwitterAPI
+consumer_key = 'ReiioSOcwxIoySQa0C0T2MrSH'
+consumer_secret = 'TBRQQ5PbhBKE7DydtKyO8QCJ3JgwBj3U4kpYClinrT0vfkYutY'
+access_token = '3080354129-ngnTaZCzbMsbFQWk19sYMY5VYjlbDnOgDQog2fM'
+access_token_secret = 'u68v5vfwK9CVF1zxflpCx7tVCmGXSlEeVT7aFRx1ujOOb'
+# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+# auth.set_access_token(access_token, access_token_secret)
+
+# api = tweepy.API(auth)
+#
+# trends1=api.trends_place(1)
+#
+# data = trends1[0]
+# trends=data['trends']
+# names = [trend['name'] for trend in trends]
+# # put all the names together with a ' ' separating them
+# trendsName = ' '.join(names)
+# print(trendsName)
 
 # How do I use my authorization keys without being prone to security issues?
 # One website tells me to store my keys as a json file but idk how to do that
@@ -22,6 +42,12 @@ jinja_env = jinja2.Environment(
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
+        # api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
+        # r = api.request('search/tweets', {'q':'pizza'})
+        # print r.status_code
+
+
+
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render())
 

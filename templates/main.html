@@ -1,11 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Trends</title>
+    <link rel ="stylesheet" href = "stylesheets/style.css">
   </head>
+
   <body>
-    Hello world
-    <button onclick="window.location='/aboutus'" type="submit" class="backMain" name = "backMain">About the creators</button>
+    <div class="topnav">
+      <a class="active" href="/">Home</a>
+      <a href="/aboutus">About</a>
+      <div class="search-container">
+        <form action="/action_page.php">
+          <input type="text" placeholder="Search.." name="search">
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <h1>Here's how {{location}} is feeling:</h1>
+
+    <div class = "top_trends">
+      <ol>
+        {% for trend in trends %}
+        <li><a href = "templates/info.html?topic={{trend}}">{{trend}}</a>: {{trend.num_tweets}} tweets</li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div class = "response">
+      <h2>{{location}} is looking pretty {{answer}} right now.</h2>
+    </div>
   </body>
 </html>
