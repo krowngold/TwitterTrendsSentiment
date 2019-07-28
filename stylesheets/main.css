@@ -1,3 +1,42 @@
+.title {
+  text-align: center;
+}
+
+
+
+.content {
+  text-align: center;
+}
+
+.trends {
+  text-align: center;
+  width: 300px;
+  height: 800px;
+  border: 5px solid black;
+  border-radius: 15px;
+
+}
+
+
+
+
+
+
+
+
+
 .backMain {
-  
+  text-align: center;
+  width: 100pt;
+  height: 50pt;
+  font-size: 18pt;
+  font: Helvetica, sans-serif;
+  background-color: #e5756a;
+  border-radius: 8pt;
+  transition: background-color 0.5s ease-out;
+}
+
+.backMain:hover {
+  background-color: #dead3a ;
+  cursor: pointer;
 }
