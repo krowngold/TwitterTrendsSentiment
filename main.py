@@ -9,10 +9,15 @@ jinja_env = jinja2.Environment(
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
+        template = jinja_env.get_template('templates/main.html')
+        self.response.write(template.render())
+
+class AboutUs(webapp2.RequestHandler):
+    def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
 
 app = webapp2.WSGIApplication([
-    # ('/', MainPage),
-    ('/aboutus', MainPage)
+    ('/', MainPage),
+    ('/aboutus', AboutUs)
 ], debug=True)

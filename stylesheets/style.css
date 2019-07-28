@@ -47,10 +47,12 @@ div.ethan {
   margin-right: 25pt;
   margin-left: 10pt;
   float: left;
+  justify-content: center;
 }
 
 div.noah {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   border: 2pt solid black;
   border-radius: 15pt;
@@ -62,6 +64,7 @@ div.noah {
 
 div.jason {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   border: 2pt solid black;
   border-radius: 15pt;
