@@ -1,25 +1,24 @@
-body.about {
+.about {
   background-color: #f6f0e2;
   font-family: Helvetica, sans-serif;
   font-size: 20pt;
 }
 
-h1.about_title {
-  display: flex;
-  justify-content: center;
+.about_title {
+  text-align: center;
 }
 
-div.about_surround {
+.about_surround {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
 }
 
-img.about {
+.about {
 
 }
 
-div.about_button {
+.about_button {
   margin-top: 20pt;
   display: flex;
   justify-content: center;
@@ -28,7 +27,7 @@ div.about_button {
   width: 1270pt;
 }
 
-button.backMain {
+.backMain {
   width: 100pt;
   height: 50pt;
   font-size: 18pt;
@@ -38,7 +37,7 @@ button.backMain {
 }
 
 
-div.ethan {
+.ethan {
   display: flex;
   flex-direction: column;
   border: 2pt solid black;
@@ -50,7 +49,7 @@ div.ethan {
   justify-content: center;
 }
 
-div.noah {
+.noah {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -62,7 +61,7 @@ div.noah {
   float: left;
 }
 
-div.jason {
+.jason {
   display: flex;
   justify-content: center;
   flex-direction: column;
