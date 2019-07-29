@@ -3,14 +3,14 @@ import logging
 import jinja2
 import os
 import json
-import tweepy
+# import tweepy
 #///////// - Jason Li
-import argparse
-from google.cloud import language
-from google.cloud.language import enums
-from google.cloud.language import types
-from google.cloud import language
-from google.oauth2 import service_account
+# import argparse
+# from google.cloud import language
+# from google.cloud.language import enums
+# from google.cloud.language import types
+# from google.cloud import language
+# from google.oauth2 import service_account
 #///////// - Jason Li
 # import tweepy not sure how this one works
 # from twitter import twitter
@@ -55,13 +55,13 @@ class MainPage(webapp2.RequestHandler):
         access_token = "NNlVJFrlyItn1bg7rN2TSHgd2pWfinqAvUsGUpY"
         access_token_secret = "9n4P1lz4mZ6Vx6WTrl6BRf8pIgg5fIFO0kGS8Z3U3To4v"
 
-        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
-        auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+        # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        # auth.set_access_token(access_token, access_token_secret)
+        # auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
 
-        api = tweepy.API(auth)
-        for tweet in tweepy.Cursor(api.search, q='tweepy').items(10):
-            print(tweet.text)
+        # api = tweepy.API(auth)
+        # for tweet in tweepy.Cursor(api.search, q='tweepy').items(10):
+        #     print(tweet.text)
 
         # trends1 = api.trends_place(2459115)
         # data = trends1[0]
@@ -81,12 +81,12 @@ class AboutUs(webapp2.RequestHandler):
         self.response.write(template.render())
 
 
-class sentiment_analysis(webapp2.RequestHandler):
-    #This allows access to the paid API
-    creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
-    client = language.LanguageServiceClient(
-        credentials = creds,
-    )
+# class sentiment_analysis(webapp2.RequestHandler):
+#     #This allows access to the paid API
+#     creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
+#     client = language.LanguageServiceClient(
+#         credentials = creds,
+#     )
     #This funciton will return the values given by the API
     #def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
     #):
@@ -106,5 +106,5 @@ class sentiment_analysis(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs)
-    ('/', sentiment_analysis)
+    # ('/', sentiment_analysis)
 ], debug=True)
