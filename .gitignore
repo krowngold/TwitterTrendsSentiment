@@ -1,2 +1,4 @@
 lib
+lib2
 *.pyc
+*.json
