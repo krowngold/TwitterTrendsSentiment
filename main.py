@@ -53,14 +53,16 @@ class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class sentiment_analysis(webapp2.RequestHandler):
+    def analyze
+
+    def print
 
 
 
 
 
-
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs)
