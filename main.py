@@ -5,11 +5,9 @@ import os
 import json
 # import tweepy not sure how this one works
 # from twitter import twitter
-# from TwitterAPI import TwitterAPI
-consumer_key = 'ReiioSOcwxIoySQa0C0T2MrSH'
-consumer_secret = 'TBRQQ5PbhBKE7DydtKyO8QCJ3JgwBj3U4kpYClinrT0vfkYutY'
-access_token = '3080354129-ngnTaZCzbMsbFQWk19sYMY5VYjlbDnOgDQog2fM'
-access_token_secret = 'u68v5vfwK9CVF1zxflpCx7tVCmGXSlEeVT7aFRx1ujOOb'
+from TwitterAPI import TwitterAPI
+
+
 # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 # auth.set_access_token(access_token, access_token_secret)
 
@@ -45,9 +43,6 @@ class MainPage(webapp2.RequestHandler):
         # api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
         # r = api.request('search/tweets', {'q':'pizza'})
         # print r.status_code
-
-
-
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render())
 
