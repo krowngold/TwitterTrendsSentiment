@@ -1,12 +1,11 @@
+/* About Us Page */
+
 .about {
   background-color: #f6f0e2;
   font-family: Helvetica, sans-serif;
   font-size: 20pt;
 }
 
-.about_title {
-  text-align: center;
-}
 
 .about_surround {
   display: flex;
@@ -18,15 +17,6 @@
 
 }
 
-.about_button {
-  margin-top: 20pt;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 500pt;
-  width: 1270pt;
-}
-
 .backMain {
   width: 100pt;
   height: 50pt;
@@ -34,14 +24,7 @@
   font: Helvetica, sans-serif;
   background-color: #e5756a;
   border-radius: 8pt;
-  transition: background-color 0.5s ease-out;
 }
-
-.response {
-  float: right;
-  display: flex;
-  border: 2pt solid black;
-  border-radius: 10pt;
 
 .backMain:hover {
   background-color: #dead3a ;
@@ -84,19 +67,21 @@
   float: left;
 }
 
-* {box-sizing: border-box;}
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+/* Main Page */
+.logo {
+  height: 100px;
+  width: 100px;
 }
 
 .topnav {
+  display: flex;
+  justify-content: space-between;
   overflow: hidden;
   background-color: #e9e9e9;
 }
 
 .topnav a {
+  line-height: 5;
   float: left;
   display: block;
   color: black;
@@ -109,6 +94,8 @@ body {
 .topnav a:hover {
   background-color: #ddd;
   color: black;
+  transition: background-color 0.5s ease-out;
+
 }
 
 .topnav a.active {
@@ -118,11 +105,14 @@ body {
 
 .topnav .search-container {
   float: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .topnav input[type=text] {
   padding: 6px;
-  margin-top: 8px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   font-size: 17px;
   border: none;
 }
@@ -136,6 +126,9 @@ body {
   font-size: 17px;
   border: none;
   cursor: pointer;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
 }
 
 .topnav .search-container button:hover {
@@ -158,3 +151,9 @@ body {
     border: 1px solid #ccc;
   }
 }
+
+.response {
+  float: right;
+  display: flex;
+  border: 2pt solid black;
+  border-radius: 10pt;

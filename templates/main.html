@@ -8,8 +8,11 @@
 
   <body>
     <div class="topnav">
-      <a class="active" href="/">Home</a>
-      <a href="/aboutus">About</a>
+      <div class="topnav_buttons">
+        <a class="active" href="/">Home</a>
+        <a class="aboutus" href="/aboutus">About The Creators</a>
+      </div>
+      <img class="logo" src="images/earthsanity_logo.png" alt="earthsanity_logo">
       <div class="search-container">
         <form action="/action_page.php">
           <input type="text" placeholder="Search.." name="search">
@@ -17,6 +20,7 @@
         </form>
       </div>
     </div>
+    
 
     <h1>Here's how {{location}} is feeling:</h1>
 
@@ -32,20 +36,4 @@
       <h2>{{location}} is looking pretty {{answer}} right now.</h2>
     <link rel="stylesheet" href="stylesheets/main.css">
   </head>
-  <body class="content">
-    <h1 class="title">Earthsanity</h1>
-    <div class="search_location">
-      <input type="search" name="location" placeholder="Location">
-    </div>
-
-    <div class="trends">
-      <h2>Twitter Trends Right Now:</h2>
-    </div>
-
-    <div class="summary">
-    </div>
-    <div class="about_the_creators">
-      <button onclick="window.location='/aboutus'" type="submit" class="backMain" name = "backMain">About the creators</button>
-    </div>
-  </body>
 </html>
