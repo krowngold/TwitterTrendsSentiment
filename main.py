@@ -43,9 +43,6 @@ class MainPage(webapp2.RequestHandler):
         # api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
         # r = api.request('search/tweets', {'q':'pizza'})
         # print r.status_code
-
-
-
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render())
 
