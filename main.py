@@ -3,6 +3,14 @@ import logging
 import jinja2
 import os
 import json
+#///////// - Jason Li
+import argparse
+from google.cloud import language
+from google.cloud.language import enums
+from google.cloud.language import types
+from google.cloud import language
+from google.oauth2 import service_account
+#///////// - Jason Li
 # import tweepy not sure how this one works
 # from twitter import twitter
 from TwitterAPI import TwitterAPI
@@ -51,16 +59,31 @@ class AboutUs(webapp2.RequestHandler):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
 
+
 class sentiment_analysis(webapp2.RequestHandler):
-    def analyze
+    #This allows access to the paid API
+    creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
+    client = language.LanguageServiceClient(
+        credentials = creds,
+    )
+    #This funciton will return the values given by the API
+    def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
+    ):
+        #
+    def print():
+        #print out the things that analyze() returns
+        #check in the command line for the results
+        #print it out via the website later on
 
-    def print
 
-
+#Where do i put access token?
+#How do I stop accessing the api
+#how do I cache the files?
 
 
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs)
+    ('/', sentiment_analysis')
 ], debug=True)
