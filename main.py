@@ -67,10 +67,10 @@ class sentiment_analysis(webapp2.RequestHandler):
         credentials = creds,
     )
     #This funciton will return the values given by the API
-    def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
-    ):
+    #def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
+    #):
         #
-    def print():
+    #def print():
         #print out the things that analyze() returns
         #check in the command line for the results
         #print it out via the website later on
@@ -85,5 +85,5 @@ class sentiment_analysis(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs)
-    ('/', sentiment_analysis')
+    ('/', sentiment_analysis)
 ], debug=True)
