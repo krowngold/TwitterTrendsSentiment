@@ -25,8 +25,8 @@
     <h1 class="trends">Here's What's Happening Right Now:</h1>
     <div class = "top_trends">
       <ol>
-        {% for trend in top_trends %}
-        <li><a href = "templates/info.html?topic={{trend}}">{{trend.name}}</a>: {{trend.tweet_volume}} tweets</li>
+        {% for i in range(10) %}
+        <li><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click'>{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
         {% endfor %}
       </ol>
     </div>
