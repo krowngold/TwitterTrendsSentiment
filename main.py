@@ -63,6 +63,13 @@ class AboutUs(webapp2.RequestHandler):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
 
+class Info(webapp2.RequestHandler):
+    def get(self):
+        # template_vars = {
+        #     "tweets": tweets
+        # }
+        template = jinja_env.get_template('templates/info.html')
+        self.response.write(template.render())
 
 # class sentiment_analysis(webapp2.RequestHandler):
 #     #This allows access to the paid API
@@ -89,5 +96,6 @@ class AboutUs(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs)
+    ('/info', Info)
     # ('/', sentiment_analysis)
 ], debug=True)
