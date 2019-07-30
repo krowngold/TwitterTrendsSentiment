@@ -13,8 +13,10 @@ from google.oauth2 import service_account
 #///////// - Jason Li
 # import tweepy not sure how this one works
 # from twitter import twitter
-# from TwitterAPI import TwitterAPI
+from TwitterAPI import TwitterAPI
 
+import urllib
+from google.appengine.api import urlfetch
 
 # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 # auth.set_access_token(access_token, access_token_secret)
@@ -66,9 +68,25 @@ class sentiment_analysis(webapp2.RequestHandler):
     client = language.LanguageServiceClient(
         credentials = creds,
     )
+    # def get(self)
+# api_key = "key"#Type the Api KEY
+# base_url = api url get#Get the url for the api
+# params = {'q' : 'Harry Potter', 'key' : api_key,}#TYPE IN THE PARAMTERS TO CALL FOR INFORMATION
+# urllib.urlencodee(param)
+# full_url = base_url + "?" + urllib.urlencode(params)
+#
+# #fetch url
+# books_reponse = urlfetch.fetch(full_url).content
+# #get json response and convert to a dictionary
+# dictionary = json.loads(books_response)
+#
+# template_vars = {
+#     'books' : books_dictionary['items'],
+#     }
+# book[x][a] in order to get the stuff from the dictionary.
     #This funciton will return the values given by the API
-    #def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
-    #):
+    # def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
+    # ):
         #
     #def print():
         #print out the things that analyze() returns
@@ -84,6 +102,6 @@ class sentiment_analysis(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/aboutus', AboutUs)
+    ('/aboutus', AboutUs),
     ('/', sentiment_analysis)
 ], debug=True)
