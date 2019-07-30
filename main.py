@@ -63,9 +63,6 @@ class MainPage(webapp2.RequestHandler):
             trends.pop(temp)
             top_trends.append(max)
 
-        for i in range(len(top_trends)):
-            print top_trends[i].name + " tweet volume: " + str(top_trends[i].tweet_volume)
-
         template_vars = {
             "top_trends": top_trends,
         }
@@ -111,6 +108,6 @@ class Info(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs)
-    ('/info', Info)
+    # ('/info', Info)
     # ('/', sentiment_analysis)
 ], debug=True)
