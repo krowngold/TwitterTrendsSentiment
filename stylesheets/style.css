@@ -179,6 +179,7 @@ div.trends_division {
 .group_image {
   display: flex;
   justify-content: center;
+  margin: 50px 50px 50px 50px;
 }
 
 .noahs_ark {
