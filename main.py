@@ -108,30 +108,41 @@ class MainPage(webapp2.RequestHandler):
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
         #//////////////////////////////////////////////////////////////////////////////////////////
-        api_key = "4da7e0a5920ffb13aadf6e83ee7ae01ed5e6ae27"#Key to let you access to API
+        api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
         api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
         totalUrl = api_url + "?" + api_key#The total url
-        packageSent = urllib.urlencode({#The information being sent to the API
-        #somehow get information from noah to put inside here
-        #and pass the information to the sentiment API
-        #lists inside dictionary
-            "Request_body" : "My name is jason li, i am very happy"
-        })
+#The information being sent to the API
+#somehow get information from noah to put inside here
+#and pass the information to the sentiment API
+#lists inside dictionary
+        packageSent ={
+            "document" : {"type" : "PLAIN_TEXT",
+                          "content" : "My name is jason and im very happy"
+            }
+        }
+        print packageSent
+        print "\n"
+        print json.dumps(packageSent)
         getSentiment = urlfetch.fetch(totalUrl,
             method = urlfetch.POST,
-            packageSent = packageSent
+            payload = json.dumps(packageSent),
+            headers={'Content-Type': 'application/json'}
         )
+
         if getSentiment.status_code == 200:
             returnedAPI = json.loads(getSentiment.content)
+            template_vars = {
+                'totalSentiment' : returnedAPI['documentSentiment']['score'],
+                'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
+            }
+            print template_vars
+            print("Checking 123")
         elif getSentiment.status_code == 400:
-            message = "Invalid Value/Input, please try again"
+            message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
+            print message
         else:
-            message = "Something went wrong going into API" + str(result.status_code) + " " + str(result.content)
-            ErrorNotification.new(msg)
-        template_vars = {
-            'totalSentiment' : returnedAPI['documentSentiment']['score'],
-            'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
-        }
+            message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
+            print message
         #/////////////////////////////////////////////////////////////////////////////////////////////
 class AboutUs(webapp2.RequestHandler):
     def get(self):
