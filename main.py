@@ -168,6 +168,41 @@ class MainPage(webapp2.RequestHandler):
         #     'totalSentiment' : returnedAPI['documentSentiment']['score'],
         #     'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
         # }
+#         api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
+#         api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+#         totalUrl = api_url + "?" + api_key#The total url
+# #The information being sent to the API
+# #somehow get information from noah to put inside here
+# #and pass the information to the sentiment API
+# #lists inside dictionary
+#         packageSent ={
+#             "document" : {"type" : "PLAIN_TEXT",
+#                           "content" : "My name is jason and im very happy"
+#             }
+#         }
+#         print packageSent
+#         print "\n"
+#         print json.dumps(packageSent)
+#         getSentiment = urlfetch.fetch(totalUrl,
+#             method = urlfetch.POST,
+#             payload = json.dumps(packageSent),
+#             headers={'Content-Type': 'application/json'}
+#         )
+#
+#         if getSentiment.status_code == 200:
+#             returnedAPI = json.loads(getSentiment.content)
+#             template_vars = {
+#                 'totalSentiment' : returnedAPI['documentSentiment']['score'],
+#                 'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
+#             }
+#             print template_vars
+#             print("Checking 123")
+#         elif getSentiment.status_code == 400:
+#             message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
+#             print message
+#         else:
+#             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
+#             print message
         #/////////////////////////////////////////////////////////////////////////////////////////////
 class AboutUs(webapp2.RequestHandler):
     def get(self):
