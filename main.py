@@ -140,19 +140,33 @@ class MainPage(webapp2.RequestHandler):
 
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
-        #//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// - Sentiment Api analysis
         api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
         api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-        totalUrl = api_url + "?" + api_key#The total url
-#The information being sent to the API
-#somehow get information from noah to put inside here
-#and pass the information to the sentiment API
-#lists inside dictionary
-        packageSent ={
-            "document" : {"type" : "PLAIN_TEXT",
-                          "content" : "My name is jason and im very happy"
+        totalUrl = api_url + "?" + api_key#The total url to access the API
+        testList = ['I am very sad', 'I am very happy', 'I am not happy', 'I like you']
+        amountOfValues = len(testList)
+        for element in testList:
+            packageSent ={
+                "document" : {"type" : "PLAIN_TEXT",
+                              "content" : element
+                }
             }
-        }
+            currentSentiment = getSentiment(packageSent)
+            if currentSentiment >= -1 and currentSentiment <= 1:
+                totalSentiment += currentSentiment
+            else:
+                errorAmount += 1
+        amountOfValues -= errorAmount
+        averageSentiment = totalSentiment/amountOfValues
+        if averageSentiment > 0.25 <= 1.0:
+            print "Positive average"
+        elif totalSentiment[score] < 0.25 and totalSentiment[score] > -0.25:
+            print "Neutral"
+        elif totalSentiment[score] < -0.25:
+            print "Negative"
+    def getSentiment(packageSent):
+        errorCheck = 2
         print packageSent
         print "\n"
         print json.dumps(packageSent)
@@ -161,27 +175,26 @@ class MainPage(webapp2.RequestHandler):
             payload = json.dumps(packageSent),
             headers={'Content-Type': 'application/json'}
         )
-
         if getSentiment.status_code == 200:
             returnedAPI = json.loads(getSentiment.content)
             template_vars = {
                 'totalSentiment' : returnedAPI['documentSentiment']['score'],
                 'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
             }
-            print template_vars
-            print("Checking 123")
+            return totalSentiment['score']
         elif getSentiment.status_code == 400:
             message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
             print message
+            return errorCheck
         else:
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
+            return errorCheck
         #/////////////////////////////////////////////////////////////////////////////////////////////
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
-
 class Info(webapp2.RequestHandler):
     def get(self):
         template_vars = {
