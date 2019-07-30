@@ -3,7 +3,7 @@ import logging
 import jinja2
 import os
 import json
-import twitter
+# import twitter
 
 
 #///////// - Jason Li
