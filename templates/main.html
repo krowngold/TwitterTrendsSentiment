@@ -25,17 +25,13 @@
     <h1 class="trends">Here's What's Happening Right Now:</h1>
     <div class = "top_trends">
       <ol>
-        {% for trend in trends %}
-        <li><a href = "templates/info.html?topic={{trend}}">{{trend}}</a>: {{trend.num_tweets}} tweets</li>
+        {% for trend in top_trends %}
+        <li><a href = "templates/info.html?topic={{trend}}">{{trend.name}}</a>: {{trend.tweet_volume}} tweets</li>
         {% endfor %}
       </ol>
     </div>
   </div>
   <div class="location_feeling">
     <h2 class="location">Here's how {{location}} is feeling:</h2>
-
-    <div class = "response">
-      <h2>{{location}} is looking pretty {{answer}} right now.</h2>
-    <link rel="stylesheet" href="stylesheets/main.css">
   </head>
 </html>
