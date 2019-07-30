@@ -19,6 +19,9 @@ api = twitter.Api(consumer_key = consumer_key,
     access_token_key= access_token,
     access_token_secret= access_token_secret,
     tweet_mode="extended")
+# import urllib
+#
+# from google.appengine.api import urlfetch
 
 # pjson = codebeautify.json.read()
 # pdata = json.loads(pjson)
@@ -33,6 +36,38 @@ api = twitter.Api(consumer_key = consumer_key,
 # from google.cloud import language
 # from google.oauth2 import service_account
 #///////// - Jason Li
+# import tweepy not sure how this one works
+# from twitter import twitter
+# from TwitterAPI import TwitterAPI
+
+import urllib
+from google.appengine.api import urlfetch
+
+# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+# auth.set_access_token(access_token, access_token_secret)
+
+# api = tweepy.API(auth)
+#
+# trends1=api.trends_place(1)
+#
+# data = trends1[0]
+# trends=data['trends']
+# names = [trend['name'] for trend in trends]
+# # put all the names together with a ' ' separating them
+# trendsName = ' '.join(names)
+# print(trendsName)
+
+# How do I use my authorization keys without being prone to security issues?
+# One website tells me to store my keys as a json file but idk how to do that
+# credentials = {}
+# credentials['CONSUMER_KEY'] = ...
+# credentials['CONSUMER_SECRET'] = ...
+# credentials['ACCESS_TOKEN'] = ...
+# credentials['ACCESS_SECRET'] = ...
+#
+# with open("twitter_credentials.json", "w") as file:
+#     json.dump(credentials, file)
+#     print "dumped files"
 
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -105,7 +140,32 @@ class MainPage(webapp2.RequestHandler):
 
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
-
+        #//////////////////////////////////////////////////////////////////////////////////////////
+        api_key = "4da7e0a5920ffb13aadf6e83ee7ae01ed5e6ae27"#Key to let you access to API
+        api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+        totalUrl = api_url + "?" + api_key#The total url
+        packageSent = urllib.urlencode({#The information being sent to the API
+        #somehow get information from noah to put inside here
+        #and pass the information to the sentiment API
+        #lists inside dictionary
+            "Request_body" : "My name is jason li, i am very happy"
+        })
+        getSentiment = urlfetch.fetch(totalUrl,
+            method = urlfetch.POST,
+            packageSent = packageSent
+        )
+        if getSentiment.status_code == 200:
+            returnedAPI = json.loads(getSentiment.content)
+        elif getSentiment.status_code == 400:
+            message = "Invalid Value/Input, please try again"
+        else:
+            message = "Something went wrong going into API" + str(result.status_code) + " " + str(result.content)
+            ErrorNotification.new(msg)
+        template_vars = {
+            'totalSentiment' : returnedAPI['documentSentiment']['score'],
+            'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
+        }
+        #/////////////////////////////////////////////////////////////////////////////////////////////
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
@@ -113,11 +173,33 @@ class AboutUs(webapp2.RequestHandler):
 
 class Info(webapp2.RequestHandler):
     def get(self):
-        # template_vars = {
-        #     "tweets": tweets
-        # }
+        template_vars = {
+            "tweets": tweets
+        }
         template = jinja_env.get_template('templates/info.html')
         self.response.write(template.render())
+# class sentiment_analysis(webapp2.RequestHandler):
+    #This allows access to the paid API
+    # creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
+    # client = language.LanguageServiceClient(
+    #     credentials = creds,
+    # )
+    # def get(self)
+# api_key = "key"#Type the Api KEY
+# base_url = api url get#Get the url for the api
+# params = {'q' : 'Harry Potter', 'key' : api_key,}#TYPE IN THE PARAMTERS TO CALL FOR INFORMATION
+# urllib.urlencodee(param)
+# full_url = base_url + "?" + urllib.urlencode(params)
+#
+# #fetch url
+# books_reponse = urlfetch.fetch(full_url).content
+# #get json response and convert to a dictionary
+# dictionary = json.loads(books_response)
+#
+# template_vars = {
+#     'books' : books_dictionary['items'],
+#     }
+# book[x][a] in order to get the stuff from the dictionary.
 
 # class sentiment_analysis(webapp2.RequestHandler):
 #     #This allows access to the paid API
@@ -126,8 +208,8 @@ class Info(webapp2.RequestHandler):
 #         credentials = creds,
 #     )
     #This funciton will return the values given by the API
-    #def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
-    #):
+    # def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
+    # ):
         #
     #def print():
         #print out the things that analyze() returns
@@ -143,7 +225,7 @@ class Info(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/aboutus', AboutUs)
+    ('/aboutus', AboutUs),
     # ('/info', Info)
     # ('/', sentiment_analysis)
 ], debug=True)

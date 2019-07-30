@@ -1,4 +1,8 @@
 /* Main Page */
+body {
+  background-color: #00BFFF;
+}
+
 .logo {
   height: 100px;
   width: 100px;
@@ -113,6 +117,7 @@ div.trends_division {
   height: 100px;
   border: 5px solid blue;
   border-radius: 20px;
+  box-shadow: 10px 10px 5px grey;
 
 }
 
@@ -123,6 +128,11 @@ div.trends_division {
   box-shadow: 5px 5px;
   border-radius: 20px;
   text-align: center;
+  background-color: #6495ED;
+  margin-top: 20%;
+  margin-bottom: 20%;
+  margin-right: 20%;
+  margin-left: 20%;
 }
 
 .response {
@@ -130,6 +140,8 @@ div.trends_division {
   float: right;
   border: 2pt solid black;
   text-align: center;
+  box-shadow: 10px 10px 5px grey;
+
 }
 /* About Us Page */
 
@@ -147,7 +159,7 @@ div.trends_division {
 }
 
 .about {
-
+  background-color: #B0C4DE;
 }
 
 .backMain {
@@ -164,6 +176,23 @@ div.trends_division {
   cursor: pointer;
 }
 
+.group_image {
+  display: flex;
+  justify-content: center;
+  margin: 50px 50px 50px 50px;
+}
+
+.noahs_ark {
+  width: 600px;
+  border: 10px solid white;
+  border-radius: 40%;
+}
+
+.about_surround {
+  display: flex;
+  justify-content: space-around;
+}
+
 .ethan {
   display: flex;
   flex-direction: column;
@@ -174,6 +203,7 @@ div.trends_division {
   margin-left: 10pt;
   float: left;
   justify-content: center;
+  text-align: center;
 }
 
 .noah {
@@ -186,6 +216,7 @@ div.trends_division {
   margin-right: 25pt;
   /* margin-left: 10pt; */
   float: left;
+  text-align: center;
 }
 
 .jason {
@@ -198,4 +229,5 @@ div.trends_division {
   margin-right: 10pt;
   /* margin-left: 10pt; */
   float: left;
+  text-align: center;
 }
