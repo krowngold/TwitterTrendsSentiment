@@ -1,3 +1,5 @@
+curtain = new Curtains("canvas")
+
 // const headerElement =
 //   document.querySelector(`#header`);
 //

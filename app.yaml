@@ -6,7 +6,7 @@ handlers:
 - url: /stylesheets
   static_dir: stylesheets
 - url: /js
-  static_dir: scripts
+  static_dir: js
 - url: /images
   static_dir: images
 - url: /.*
