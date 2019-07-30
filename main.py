@@ -5,6 +5,10 @@ import os
 import json
 import twitter
 
+# pjson = codebeautify.json.read()
+# pdata = json.loads(pjson)
+# print pdata
+
 
 #///////// - Jason Li
 # import argparse
@@ -19,6 +23,17 @@ jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class MainPage(webapp2.RequestHandler):
+    def POST(self):
+        if (self.response.get("search") in codebeautify.json):
+            template_vars = {
+                "new_location": self.response.get("search")
+            }
+            template = jinja_env.get_template("templates/main.html")
+            self.response.write(template.render(new_location))
+        else:
+            template = jinja_env.get_template("templates/main.html")
+            self.response.write(template.render())
+
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
 
