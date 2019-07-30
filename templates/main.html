@@ -14,8 +14,8 @@
       </div>
       <img class="logo" src="images/earthsanity_logo.png" alt="earthsanity_logo">
       <div class="search-container">
-        <form action="/action_page.php">
-          <input type="text" placeholder="Search.." name="search">
+        <form method="POST" action="/">
+          <input type="text" placeholder="Search..." name="search">
           <button class="submit" type="submit">Submit</button>
         </form>
       </div>
@@ -25,15 +25,13 @@
     <h1 class="trends">Here's What's Happening Right Now:</h1>
     <div class = "top_trends">
       <ol>
-        {% for trend in trends %}
-        <li><a href = "templates/info.html?topic={{trend}}">{{trend}}</a>: {{trend.num_tweets}} tweets</li>
+        {% for trend in top_trends %}
+        <li><a href = "templates/info.html?topic={{trend}}">{{trend.name}}</a>: {{trend.tweet_volume}} tweets</li>
         {% endfor %}
       </ol>
     </div>
   </div>
   <div class="location_feeling">
-    <div class = "response">
-      <h2>{{location}} is looking pretty {{answer}} right now.</h2>
-    <link rel="stylesheet" href="stylesheets/main.css">
+    <h2 class="location">Here's how {{location}} is feeling:</h2>
   </head>
 </html>

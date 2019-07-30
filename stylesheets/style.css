@@ -1,6 +1,6 @@
 /* Main Page */
-* {
-  
+body {
+  background-color: #00BFFF;
 }
 
 .logo {
@@ -31,6 +31,10 @@
   transition: background-color 0.5s ease-out;
 }
 
+li {
+  font-family: Futura, sans-serif;
+  font-size: 20pt;
+}
 
 .active:hover {
   background-color: #8B0000;
@@ -63,6 +67,20 @@
   margin-top: 20px;
   margin-bottom: 20px;
 
+}
+
+div.trends_division {
+  display: flex;
+  flex-direction: column;
+  /* align-items: flex-start; */
+  height: 100%;
+  width: auto;
+  margin-top: 100px;
+  background-color: lightcoral;
+  padding: 15px;
+  margin-right: 10px;
+  border: 2pt solid black;
+  box-shadow: 5px 5px;
 }
 
 .aboutus {
@@ -104,9 +122,17 @@
 }
 
 .location_feeling {
-  float: left;
+  float: right;
   height: 100px;
+  border: 2px solid black;
+  box-shadow: 5px 5px;
+  border-radius: 20px;
   text-align: center;
+  background-color: #6495ED;
+  margin-top: 20%;
+  margin-bottom: 20%;
+  margin-right: 20%;
+  margin-left: 20%;
 }
 
 .response {
@@ -133,7 +159,7 @@
 }
 
 .about {
-
+  background-color: #B0C4DE;
 }
 
 .backMain {
@@ -160,6 +186,7 @@
   margin-left: 10pt;
   float: left;
   justify-content: center;
+  text-align: center;
 }
 
 .noah {
@@ -172,6 +199,7 @@
   margin-right: 25pt;
   /* margin-left: 10pt; */
   float: left;
+  text-align: center;
 }
 
 .jason {
@@ -184,4 +212,5 @@
   margin-right: 10pt;
   /* margin-left: 10pt; */
   float: left;
+  text-align: center;
 }

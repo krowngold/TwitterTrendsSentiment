@@ -3,7 +3,11 @@ import logging
 import jinja2
 import os
 import json
-# import twitter
+import twitter
+
+# pjson = codebeautify.json.read()
+# pdata = json.loads(pjson)
+# print pdata
 
 
 #///////// - Jason Li
@@ -19,6 +23,17 @@ jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class MainPage(webapp2.RequestHandler):
+    def POST(self):
+        if (self.response.get("search") in codebeautify.json):
+            template_vars = {
+                "new_location": self.response.get("search")
+            }
+            template = jinja_env.get_template("templates/main.html")
+            self.response.write(template.render(new_location))
+        else:
+            template = jinja_env.get_template("templates/main.html")
+            self.response.write(template.render())
+
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
 
@@ -27,24 +42,46 @@ class MainPage(webapp2.RequestHandler):
         access_token = "3080354129-r8HhnjK4eYZUG9BopJMgq0cPf7BEmRtrCmEuuIf"
         access_token_secret = "bJ6pCD4zQg7wLSV03TehGF6iL8WkDaUscij7lvTT7puHc"
 
-        # api = twitter.Api(consumer_key = consumer_key,
-        #     consumer_secret=consumer_secret,
-        #     access_token_key= access_token,
-        #     access_token_secret= access_token_secret)
-        #
-        # trends = api.GetTrendsWoeid(2459115, exclude = None)
-        # for i in range(1, 11):
-        #     print trends[i]
-        #     print "\n"
+        api = twitter.Api(consumer_key = consumer_key,
+            consumer_secret=consumer_secret,
+            access_token_key= access_token,
+            access_token_secret= access_token_secret)
+
+        trends = api.GetTrendsWoeid(2490383, exclude = None)
+        trends.sort(key = lambda x: x.tweet_volume, reverse = True)
+
+        top_trends = []
+
+        while len(top_trends) < 10:
+            max = trends[0]
+            temp = 0
+            for i in range(len(trends)):
+                if (not trends[i].tweet_volume == None) and trends[i].tweet_volume > max.tweet_volume:
+                    max = trends[i]
+                    temp = i
+
+            trends.pop(temp)
+            top_trends.append(max)
+
+        template_vars = {
+            "top_trends": top_trends,
+        }
 
         template = jinja_env.get_template('templates/main.html')
-        self.response.write(template.render())
+        self.response.write(template.render(template_vars))
 
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
 
+class Info(webapp2.RequestHandler):
+    def get(self):
+        template_vars = {
+            "tweets": tweets
+        }
+        template = jinja_env.get_template('templates/info.html')
+        self.response.write(template_vars())
 
 # class sentiment_analysis(webapp2.RequestHandler):
 #     #This allows access to the paid API
@@ -52,14 +89,14 @@ class AboutUs(webapp2.RequestHandler):
 #     client = language.LanguageServiceClient(
 #         credentials = creds,
 #     )
-    #This funciton will return the values given by the API
-    #def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
-    #):
-        #
-    #def print():
-        #print out the things that analyze() returns
-        #check in the command line for the results
-        #print it out via the website later on
+    # This funciton will return the values given by the API
+    # def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
+    # ):
+    #
+    # def print():
+    #     print out the things that analyze() returns
+    #     check in the command line for the results
+    #     print it out via the website later on
 
 
 #Where do i put access token?
@@ -71,5 +108,6 @@ class AboutUs(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs)
+    # ('/info', Info)
     # ('/', sentiment_analysis)
 ], debug=True)
