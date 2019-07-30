@@ -4,6 +4,21 @@ import jinja2
 import os
 import json
 import twitter
+import sys
+import pprint
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+consumer_key = "PTHIXCLxsNtC7vOncS6vzHiBu"
+consumer_secret = "dl7jsDCHwcB7XHoAY7FZcLSY8ktbCzmnxXZckNgNi0CtoWWvNz"
+access_token = "3080354129-r8HhnjK4eYZUG9BopJMgq0cPf7BEmRtrCmEuuIf"
+access_token_secret = "bJ6pCD4zQg7wLSV03TehGF6iL8WkDaUscij7lvTT7puHc"
+
+api = twitter.Api(consumer_key = consumer_key,
+    consumer_secret=consumer_secret,
+    access_token_key= access_token,
+    access_token_secret= access_token_secret,
+    tweet_mode="extended")
 
 # pjson = codebeautify.json.read()
 # pdata = json.loads(pjson)
@@ -22,6 +37,9 @@ import twitter
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
+def split(word):
+    return [char for char in word]
+
 class MainPage(webapp2.RequestHandler):
     def POST(self):
         if (self.response.get("search") in codebeautify.json):
@@ -37,17 +55,7 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
 
-        consumer_key = "PTHIXCLxsNtC7vOncS6vzHiBu"
-        consumer_secret = "dl7jsDCHwcB7XHoAY7FZcLSY8ktbCzmnxXZckNgNi0CtoWWvNz"
-        access_token = "3080354129-r8HhnjK4eYZUG9BopJMgq0cPf7BEmRtrCmEuuIf"
-        access_token_secret = "bJ6pCD4zQg7wLSV03TehGF6iL8WkDaUscij7lvTT7puHc"
-
-        api = twitter.Api(consumer_key = consumer_key,
-            consumer_secret=consumer_secret,
-            access_token_key= access_token,
-            access_token_secret= access_token_secret)
-
-        trends = api.GetTrendsWoeid(2490383, exclude = None)
+        trends = api.GetTrendsWoeid(23424977, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
 
         top_trends = []
@@ -63,8 +71,36 @@ class MainPage(webapp2.RequestHandler):
             trends.pop(temp)
             top_trends.append(max)
 
+        search_names = []
+
+        for trend in top_trends:
+            new_string = trend.name
+            string_array = split(new_string)
+            for i in range(len(string_array)):
+                if string_array[i] == " ":
+                    string_array[i] = "%20"
+                elif string_array[i] == "#":
+                    string_array[i] = "%23"
+            new_string = ''.join(string_array)
+            search_names.append(new_string)
+
+        tweet_samples = []
+
+        pp = pprint.PrettyPrinter(indent=4)
+        results = []
+        for trend in search_names:
+            results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-29&count=1", return_json = True, lang = "English"))
+
+        for status in results:
+            temp = status["statuses"]
+            print "\n\n\nNEWTWEET\n\n\n"
+            print temp[0]["full_text"]
+            tweet_samples.append(temp[0]["full_text"])
+
         template_vars = {
             "top_trends": top_trends,
+            "search_names": search_names,
+            "tweet_samples": tweet_samples
         }
 
         template = jinja_env.get_template('templates/main.html')
