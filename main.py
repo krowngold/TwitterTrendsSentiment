@@ -26,8 +26,13 @@ api = twitter.Api(consumer_key = consumer_key,
 # pjson = codebeautify.json.read()
 # pdata = json.loads(pjson)
 # print pdata
-
-
+city_ids = None
+with open("codebeautify.json") as json_file:
+    city_ids = json.load(json_file)
+    for city in city_id:
+        print "Name: " + city["name"]
+        print "Woeid: " + city["woeid"]
+        print "\n\n"
 #///////// - Jason Li
 # import argparse
 # from google.cloud import language
@@ -76,17 +81,6 @@ def split(word):
     return [char for char in word]
 
 class MainPage(webapp2.RequestHandler):
-    def POST(self):
-        if (self.response.get("search") in codebeautify.json):
-            template_vars = {
-                "new_location": self.response.get("search")
-            }
-            template = jinja_env.get_template("templates/main.html")
-            self.response.write(template.render(new_location))
-        else:
-            template = jinja_env.get_template("templates/main.html")
-            self.response.write(template.render())
-
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
 
@@ -128,8 +122,6 @@ class MainPage(webapp2.RequestHandler):
 
         for status in results:
             temp = status["statuses"]
-            print "\n\n\nNEWTWEET\n\n\n"
-            print temp[0]["full_text"]
             tweet_samples.append(temp[0]["full_text"])
 
         template_vars = {
@@ -140,31 +132,42 @@ class MainPage(webapp2.RequestHandler):
 
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
+
+        def POST(self):
+            if (self.response.get("search") in codebeautify.json):
+                template_vars = {
+                    "new_location": self.response.get("search")
+                }
+                template = jinja_env.get_template("templates/main.html")
+                self.response.write(template.render(new_location))
+            else:
+                template = jinja_env.get_template("templates/main.html")
+                self.response.write(template.render())
         #//////////////////////////////////////////////////////////////////////////////////////////
-        api_key = "4da7e0a5920ffb13aadf6e83ee7ae01ed5e6ae27"#Key to let you access to API
-        api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-        totalUrl = api_url + "?" + api_key#The total url
-        packageSent = urllib.urlencode({#The information being sent to the API
-        #somehow get information from noah to put inside here
-        #and pass the information to the sentiment API
-        #lists inside dictionary
-            "Request_body" : "My name is jason li, i am very happy"
-        })
-        getSentiment = urlfetch.fetch(totalUrl,
-            method = urlfetch.POST,
-            packageSent = packageSent
-        )
-        if getSentiment.status_code == 200:
-            returnedAPI = json.loads(getSentiment.content)
-        elif getSentiment.status_code == 400:
-            message = "Invalid Value/Input, please try again"
-        else:
-            message = "Something went wrong going into API" + str(result.status_code) + " " + str(result.content)
-            ErrorNotification.new(msg)
-        template_vars = {
-            'totalSentiment' : returnedAPI['documentSentiment']['score'],
-            'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
-        }
+        # api_key = "4da7e0a5920ffb13aadf6e83ee7ae01ed5e6ae27"#Key to let you access to API
+        # api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+        # totalUrl = api_url + "?" + api_key#The total url
+        # packageSent = urllib.urlencode({#The information being sent to the API
+        # #somehow get information from noah to put inside here
+        # #and pass the information to the sentiment API
+        # #lists inside dictionary
+        #     "Request_body" : "My name is jason li, i am very happy"
+        # })
+        # getSentiment = urlfetch.fetch(totalUrl,
+        #     method = urlfetch.POST,
+        #     packageSent = packageSent
+        # )
+        # if getSentiment.status_code == 200:
+        #     returnedAPI = json.loads(getSentiment.content)
+        # elif getSentiment.status_code == 400:
+        #     message = "Invalid Value/Input, please try again"
+        # else:
+        #     message = "Something went wrong going into API" + str(result.status_code) + " " + str(result.content)
+        #     ErrorNotification.new(msg)
+        # template_vars = {
+        #     'totalSentiment' : returnedAPI['documentSentiment']['score'],
+        #     'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
+        # }
         #/////////////////////////////////////////////////////////////////////////////////////////////
 class AboutUs(webapp2.RequestHandler):
     def get(self):
@@ -178,6 +181,7 @@ class Info(webapp2.RequestHandler):
         }
         template = jinja_env.get_template('templates/info.html')
         self.response.write(template.render())
+
 # class sentiment_analysis(webapp2.RequestHandler):
     #This allows access to the paid API
     # creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
