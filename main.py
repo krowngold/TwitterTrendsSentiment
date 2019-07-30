@@ -27,6 +27,10 @@ sys.setdefaultencoding('utf8')
 # import tweepy not sure how this one works
 # from twitter import twitter
 # from TwitterAPI import TwitterAPI
+
+import urllib
+from google.appengine.api import urlfetch
+
 # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 # auth.set_access_token(access_token, access_token_secret)
 
@@ -136,9 +140,9 @@ class AboutUs(webapp2.RequestHandler):
 
 class Info(webapp2.RequestHandler):
     def get(self):
-        # template_vars = {
-        #     "tweets": tweets
-        # }
+        template_vars = {
+            "tweets": tweets
+        }
         template = jinja_env.get_template('templates/info.html')
         self.response.write(template.render())
 # class sentiment_analysis(webapp2.RequestHandler):
