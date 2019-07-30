@@ -32,13 +32,31 @@ class MainPage(webapp2.RequestHandler):
             access_token_key= access_token,
             access_token_secret= access_token_secret)
 
-        trends = api.GetTrendsWoeid(2459115, exclude = None)
-        for i in range(1, 11):
-            print trends[i]
-            print "\n"
+        trends = api.GetTrendsWoeid(2490383, exclude = None)
+        trends.sort(key = lambda x: x.tweet_volume, reverse = True)
+
+        top_trends = []
+
+        while len(top_trends) < 10:
+            max = trends[0]
+            temp = 0
+            for i in range(len(trends)):
+                if (not trends[i].tweet_volume == None) and trends[i].tweet_volume > max.tweet_volume:
+                    max = trends[i]
+                    temp = i
+
+            trends.pop(temp)
+            top_trends.append(max)
+
+        for i in range(len(top_trends)):
+            print top_trends[i].name + " tweet volume: " + str(top_trends[i].tweet_volume)
+
+        template_vars = {
+            "top_trends": top_trends,
+        }
 
         template = jinja_env.get_template('templates/main.html')
-        self.response.write(template.render())
+        self.response.write(template.render(template_vars))
 
 class AboutUs(webapp2.RequestHandler):
     def get(self):
