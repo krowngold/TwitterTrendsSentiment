@@ -176,6 +176,22 @@ div.trends_division {
   cursor: pointer;
 }
 
+.group_image {
+  display: flex;
+  justify-content: center;
+}
+
+.noahs_ark {
+  width: 600px;
+  border: 10px solid white;
+  border-radius: 40%;
+}
+
+.about_surround {
+  display: flex;
+  justify-content: space-around;
+}
+
 .ethan {
   display: flex;
   flex-direction: column;

@@ -20,7 +20,7 @@ import twitter
 #///////// - Jason Li
 # import tweepy not sure how this one works
 # from twitter import twitter
-from TwitterAPI import TwitterAPI
+# from TwitterAPI import TwitterAPI
 
 import urllib
 from google.appengine.api import urlfetch
@@ -114,12 +114,12 @@ class Info(webapp2.RequestHandler):
         }
         template = jinja_env.get_template('templates/info.html')
         self.response.write(template.render())
-class sentiment_analysis(webapp2.RequestHandler):
+# class sentiment_analysis(webapp2.RequestHandler):
     #This allows access to the paid API
-    creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
-    client = language.LanguageServiceClient(
-        credentials = creds,
-    )
+    # creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
+    # client = language.LanguageServiceClient(
+    #     credentials = creds,
+    # )
     # def get(self)
 # api_key = "key"#Type the Api KEY
 # base_url = api url get#Get the url for the api
