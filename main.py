@@ -4,6 +4,12 @@ import jinja2
 import os
 import json
 import twitter
+import sys
+import urllib
+
+from google.appengine.api import urlfetch
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 # pjson = codebeautify.json.read()
 # pdata = json.loads(pjson)
@@ -20,11 +26,7 @@ import twitter
 #///////// - Jason Li
 # import tweepy not sure how this one works
 # from twitter import twitter
-from TwitterAPI import TwitterAPI
-
-import urllib
-from google.appengine.api import urlfetch
-
+# from TwitterAPI import TwitterAPI
 # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 # auth.set_access_token(access_token, access_token_secret)
 
@@ -101,7 +103,32 @@ class MainPage(webapp2.RequestHandler):
 
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
-
+        #//////////////////////////////////////////////////////////////////////////////////////////
+        api_key = "4da7e0a5920ffb13aadf6e83ee7ae01ed5e6ae27"#Key to let you access to API
+        api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+        totalUrl = api_url + "?" + api_key#The total url
+        packageSent = urllib.urlencode({#The information being sent to the API
+        #somehow get information from noah to put inside here
+        #and pass the information to the sentiment API
+        #lists inside dictionary
+            "Request_body" : "My name is jason li, i am very happy"
+        })
+        getSentiment = urlfetch.fetch(totalUrl,
+            method = urlfetch.POST,
+            packageSent = packageSent
+        )
+        if getSentiment.status_code == 200:
+            returnedAPI = json.loads(getSentiment.content)
+        elif getSentiment.status_code == 400:
+            message = "Invalid Value/Input, please try again"
+        else:
+            message = "Something went wrong going into API" + str(result.status_code) + " " + str(result.content)
+            ErrorNotification.new(msg)
+        template_vars = {
+            'totalSentiment' : returnedAPI['documentSentiment']['score'],
+            'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
+        }
+        #/////////////////////////////////////////////////////////////////////////////////////////////
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
@@ -114,12 +141,12 @@ class Info(webapp2.RequestHandler):
         # }
         template = jinja_env.get_template('templates/info.html')
         self.response.write(template.render())
-class sentiment_analysis(webapp2.RequestHandler):
+# class sentiment_analysis(webapp2.RequestHandler):
     #This allows access to the paid API
-    creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
-    client = language.LanguageServiceClient(
-        credentials = creds,
-    )
+    # creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
+    # client = language.LanguageServiceClient(
+    #     credentials = creds,
+    # )
     # def get(self)
 # api_key = "key"#Type the Api KEY
 # base_url = api url get#Get the url for the api
@@ -136,6 +163,7 @@ class sentiment_analysis(webapp2.RequestHandler):
 #     'books' : books_dictionary['items'],
 #     }
 # book[x][a] in order to get the stuff from the dictionary.
+
 # class sentiment_analysis(webapp2.RequestHandler):
 #     #This allows access to the paid API
 #     creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
