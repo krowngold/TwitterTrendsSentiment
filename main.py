@@ -3,7 +3,7 @@ import logging
 import jinja2
 import os
 import json
-import twitter
+# import twitter
 
 
 #///////// - Jason Li
@@ -27,15 +27,15 @@ class MainPage(webapp2.RequestHandler):
         access_token = "3080354129-r8HhnjK4eYZUG9BopJMgq0cPf7BEmRtrCmEuuIf"
         access_token_secret = "bJ6pCD4zQg7wLSV03TehGF6iL8WkDaUscij7lvTT7puHc"
 
-        api = twitter.Api(consumer_key = consumer_key,
-            consumer_secret=consumer_secret,
-            access_token_key= access_token,
-            access_token_secret= access_token_secret)
-
-        trends = api.GetTrendsWoeid(2459115, exclude = None)
-        for i in range(1, 11):
-            print trends[i]
-            print "\n"
+        # api = twitter.Api(consumer_key = consumer_key,
+        #     consumer_secret=consumer_secret,
+        #     access_token_key= access_token,
+        #     access_token_secret= access_token_secret)
+        #
+        # trends = api.GetTrendsWoeid(2459115, exclude = None)
+        # for i in range(1, 11):
+        #     print trends[i]
+        #     print "\n"
 
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render())

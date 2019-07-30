@@ -21,10 +21,8 @@
       </div>
     </div>
 
+    <div class="trends_division">
     <h1 class="trends">Here's What's Happening Right Now:</h1>
-
-    <h2 class="location">Here's how {{location}} is feeling:</h2>
-
     <div class = "top_trends">
       <ol>
         {% for trend in trends %}
@@ -32,6 +30,9 @@
         {% endfor %}
       </ol>
     </div>
+  </div>
+  <div class="location_feeling">
+    <h2 class="location">Here's how {{location}} is feeling:</h2>
 
     <div class = "response">
       <h2>{{location}} is looking pretty {{answer}} right now.</h2>
