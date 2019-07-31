@@ -119,6 +119,7 @@ class MainPage(webapp2.RequestHandler):
         pp = pprint.PrettyPrinter(indent=4)
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
+        # print trends
         top_trends = []
         while len(top_trends) < 10:
             max = trends[0]
@@ -129,6 +130,8 @@ class MainPage(webapp2.RequestHandler):
                     temp = i
             trends.pop(temp)
             top_trends.append(max)
+
+        # print top_trends
         search_names = []
         for trend in top_trends:
             new_string = trend.name
@@ -147,6 +150,12 @@ class MainPage(webapp2.RequestHandler):
         tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
+                # if len(status["statuses"]) == 0:
+                # pp.pprint(status)
+                # sys.exit()
+                # pp.pprint(type((status["statuses"])))
+                # pp.pprint(status["statuses"][0])
+                # status["statuses"][0]["full_text"]
                 if trend.name in status["statuses"][0]["full_text"]:
                     temp = status["statuses"]
                     if not temp:
