@@ -228,6 +228,7 @@ class MainPage(webapp2.RequestHandler):
             template_vars = self.loadTrends(self.city_code(user_search, city_ids), user_search)
         else:
             template_vars = self.loadTrends(2352824, "The United States")
+            template_vars["user_search"] = user_search
         template_vars.update()
         template = jinja_env.get_template("templates/main.html")
         self.response.write(template.render(template_vars))
