@@ -1,6 +1,6 @@
 /* Main Page */
 body {
-  background-color: #54aacf;
+  background-image: linear-gradient(to right, #87CEFA, #00BFFF, #1E90FF);
 }
 
 .logo {
@@ -13,6 +13,7 @@ body {
   justify-content: space-between;
   overflow: hidden;
   background-color: #e9e9e9;
+  border-radius: 30px;
 }
 
 .topnav .topnav_buttons a{
@@ -66,6 +67,7 @@ li {
   cursor: pointer;
   margin-top: 20px;
   margin-bottom: 20px;
+  border-radius: 2px;
 
 }
 
@@ -121,9 +123,9 @@ div.trends_division {
 
 }
 
-.location_response {
+.location_feeling {
   float: right;
-  height: 100%;
+  height: 100px;
   border: 2px solid black;
   box-shadow: 5px 5px;
   border-radius: 20px;
@@ -131,8 +133,8 @@ div.trends_division {
   background-color: #6495ED;
   margin-top: 20%;
   margin-bottom: 20%;
+  margin-right: 20%;
   margin-left: 20%;
-  /* margin-right: -20%; THIS TAG IS CAUSING THE BOX TO DISAPPEAR!!!*/
 }
 
 .response {
@@ -182,6 +184,7 @@ div.trends_division {
   margin: 50px 50px 50px 50px;
 }
 
+
 .noahs_ark {
   width: 600px;
   border: 10px solid white;
@@ -196,6 +199,7 @@ div.trends_division {
 .ethan {
   display: flex;
   flex-direction: column;
+  align-items: center;
   border: 2pt solid black;
   border-radius: 15pt;
   padding: 10pt;
@@ -206,10 +210,17 @@ div.trends_division {
   text-align: center;
 }
 
+.ethan_image {
+  width: 350px;
+  border: 4px solid white;
+  border-radius: 50%;
+}
+
 .noah {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
   border: 2pt solid black;
   border-radius: 15pt;
   padding: 10pt;
@@ -219,10 +230,17 @@ div.trends_division {
   text-align: center;
 }
 
+.noah_image {
+  width: 350px;
+  border: 4px solid white;
+  border-radius: 50%;
+}
+
 .jason {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
   border: 2pt solid black;
   border-radius: 15pt;
   padding: 10pt;
@@ -230,4 +248,11 @@ div.trends_division {
   /* margin-left: 10pt; */
   float: left;
   text-align: center;
+  background-image: linear-gradient(to right, r);
+}
+
+.jason_image {
+  width: 200px;
+  border: 4px solid white;
+  border-radius: 50%;
 }
