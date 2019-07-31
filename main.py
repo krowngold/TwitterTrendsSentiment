@@ -101,7 +101,7 @@ class MainPage(webapp2.RequestHandler):
         for trend in search_names:
             results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31&count=5", return_json = True, lang = "English"))
 
-        tweet_dict = {}
+        tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
                 if trend.name in status["statuses"][0]["full_text"]:
@@ -115,7 +115,7 @@ class MainPage(webapp2.RequestHandler):
                     else:
                         tweet_dict[trend.name] = temp[0]["full_text"]
 
-        pp.pprint(tweet_dict)
+        pp.pprint(tweet_dictionary)
 
 
 
@@ -128,7 +128,7 @@ class MainPage(webapp2.RequestHandler):
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
-            "tweet_dict": tweet_dict,
+            "tweet_dict": tweet_dictionary,
             "new_location": location
         }
         return template_vars
