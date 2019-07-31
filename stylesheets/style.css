@@ -27,11 +27,11 @@ body {
 
 
 div.top_trends {
-  padding-left: 35px;
+  padding-left: 70px;
 }
 
 .logo {
-  height: 100px;
+  height: 150px;
   width: 100px;
 }
 
@@ -47,7 +47,7 @@ div.top_trends {
 }
 
 .topnav .topnav_buttons a{
-  line-height: 5;
+  line-height: 7.2;
   float: left;
   display: block;
   color: black;

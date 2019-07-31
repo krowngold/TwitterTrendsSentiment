@@ -100,6 +100,7 @@ class MainPage(webapp2.RequestHandler):
             currentSentiment = self.getSentiment(packageSent)
             if currentSentiment >= -1 and currentSentiment <= 1:
                 totalSentiment += currentSentiment
+                print currentSentiment
             else:
                 errorAmount += 1
         amountOfValues -= errorAmount
