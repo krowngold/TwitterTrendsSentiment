@@ -14,8 +14,6 @@ from google.appengine.api import urlfetch
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-
-
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -100,12 +98,13 @@ class MainPage(webapp2.RequestHandler):
         totalSentiment = 0
         rating = ""
         errorAmount = 0
-        listOfTweets = dictionary
-        amountOfValues = len(listOfTweets)
-        for element in listOfTweets:
+        amountOfValues = len(dictionary)
+        # print amountOfValues
+        # print dictionary
+        for key in dictionary:
             packageSent ={
                 "document" : {"type" : "PLAIN_TEXT",
-                              "content" : element
+                              "content" : dictionary[key]
                 }
             }
             currentSentiment = self.getSentiment(packageSent)
@@ -114,12 +113,14 @@ class MainPage(webapp2.RequestHandler):
             else:
                 errorAmount += 1
         amountOfValues -= errorAmount
-        averageSentiment = totalSentiment/amountOfValues
-        if averageSentiment > 0.25 <= 1.0:
+        # print errorAmount
+        averageSentiment = totalSentiment
+        # print averageSentiment
+        if averageSentiment > 0.05 <= 10:
             return averageSentiment
-        elif averageSentiment < 0.25 and averageSentiment > -0.25:
+        elif averageSentiment < 0.05 and averageSentiment > -0.05:
             return averageSentiment
-        elif averageSentiment < -0.25:
+        elif averageSentiment < -0.05:
             return averageSentiment
         else:
             print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
@@ -181,12 +182,14 @@ class MainPage(webapp2.RequestHandler):
         }
 
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
+        # print template_vars["sentimentValueScore"]
         if template_vars["sentimentValueScore"] > 0.25 and template_vars["sentimentValueScore"] <= 1.0:
             template_vars["rating"] = "Positive"
         elif template_vars["sentimentValueScore"] < 0.25 and template_vars["sentimentValueScore"] > -0.25:
             template_vars["rating"] = "Neutral"
         else:
             template_vars["rating"] = "Negative"
+        # print template_vars["rating"]
         return template_vars
 
     def city_search(self, input, city_list):
@@ -204,8 +207,9 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
+        print template_vars["rating"]
+        print template_vars["sentimentValueScore"]
         template = jinja_env.get_template('templates/main.html')
-
         self.response.write(template.render(template_vars))
 
 
