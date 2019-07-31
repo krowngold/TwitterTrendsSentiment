@@ -11,12 +11,10 @@ from google.appengine.api import users
 from google.appengine.ext import ndb
 import urllib
 from google.appengine.api import urlfetch
-
 reload(sys)
 sys.setdefaultencoding('utf8')
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
-
 '''
     Unpacking twitter credentials and retrieving woeid numbers from separate json files
 '''
@@ -35,15 +33,11 @@ with open("twitter_credentials.json") as f:
         tweet_mode="extended")
 with open('codebeautify.json') as f:
     city_ids = simplejson.loads(f.read())
-
-
 '''
     Global methods
 '''
 def split(word):
     return [char for char in word]
-
-
 '''
     All the models for the website. Not sure if we're going to implement them.
 '''
@@ -55,15 +49,11 @@ class Trend(ndb.Model):
     title = ndb.StringProperty(required = True)
     num_tweets = ndb.IntegerProperty(required = True)
     date = ndb.StringProperty(required = True)
-
 class Location(ndb.Model):
     name = ndb.StringProperty(required = True)
-
-
 '''
     All handlers for the website
 '''
-
 class MainPage(webapp2.RequestHandler):
     def getSentiment(self,packageSent):
         api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
@@ -93,7 +83,6 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
-
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
         rating = ""
@@ -125,9 +114,7 @@ class MainPage(webapp2.RequestHandler):
         else:
             print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
             return averageSentiment
-
-
-    def loadTrends(self, code=3444, location = "Quebec"):
+    def loadTrends(self, code=23424977, location = "Seattle"):
         pp = pprint.PrettyPrinter(indent=4)
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
@@ -155,14 +142,10 @@ class MainPage(webapp2.RequestHandler):
                     string_array[i] = "%23"
             new_string = ''.join(string_array)
             search_names.append(new_string)
-
-        # print search_names
         tweet_samples = []
         results = []
         for trend in search_names:
             results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31&count=5", return_json = True, lang = "English"))
-
-        # print results
         tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
@@ -182,7 +165,6 @@ class MainPage(webapp2.RequestHandler):
                         print "no text in this status"
                     else:
                         tweet_dictionary[trend.name] = temp[0]["full_text"]
-
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
@@ -192,27 +174,24 @@ class MainPage(webapp2.RequestHandler):
 
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
         # print template_vars["sentimentValueScore"]
-        if template_vars["sentimentValueScore"] > 0.25 and template_vars["sentimentValueScore"] <= 1.0:
+        if template_vars["sentimentValueScore"] >= 0.05 and template_vars["sentimentValueScore"] <= 1.0:
             template_vars["rating"] = "Positive"
-        elif template_vars["sentimentValueScore"] < 0.25 and template_vars["sentimentValueScore"] > -0.25:
+        elif template_vars["sentimentValueScore"] < 0.05 and template_vars["sentimentValueScore"] > -0.05:
             template_vars["rating"] = "Neutral"
         else:
             template_vars["rating"] = "Negative"
         # print template_vars["rating"]
         return template_vars
-
     def city_search(self, input, city_list):
         for city in city_list:
             if city["name"] == input:
                 return True
         return False
-
     def city_code(self, input, city_list):
         for city in city_list:
             if city["name"] == input:
                 return city["woeid"]
         return 1
-
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
@@ -220,8 +199,6 @@ class MainPage(webapp2.RequestHandler):
         print template_vars["sentimentValueScore"]
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
-
-
     def post(self):
         user_search = self.request.get("search")
         if (self.city_search(user_search, city_ids)):
@@ -232,12 +209,10 @@ class MainPage(webapp2.RequestHandler):
         template_vars.update()
         template = jinja_env.get_template("templates/main.html")
         self.response.write(template.render(template_vars))
-
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
-
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs),

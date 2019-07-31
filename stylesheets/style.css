@@ -1,15 +1,30 @@
 /* Main Page */
-@keyframes backgroundAnimation {
-  0%{background-position:51% 0%}
-  50%{background-position:50% 100%}
-  100%{background-position:51% 0%}
-}
+
 body {
-  background: linear-gradient(177deg, #1c19c3, #18bbec, #ec1818);
+  background: linear-gradient(271deg, #232fdf, #18e6e8, #e82914);
   background-size: 600% 600%;
-  animation: backgroundAnimation 10s ease infinite;
-  margin-top: 30px;
+  -webkit-animation: AnimationName 21s ease infinite;
+  -moz-animation: AnimationName 21s ease infinite;
+  animation: AnimationName 21s ease infinite;
+
 }
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 51%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 51%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 51%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 51%}
+}
+@keyframes AnimationName {
+    0%{background-position:0% 51%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 51%}
+}
+
 
 div.top_trends {
   padding-left: 35px;
