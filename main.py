@@ -14,8 +14,6 @@ from google.appengine.api import urlfetch
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-
-
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -196,20 +194,20 @@ class MainPage(webapp2.RequestHandler):
                 errorAmount += 1
         amountOfValues -= errorAmount
         averageSentiment = totalSentiment/amountOfValues
-        if averageSentiment > 0.25 <= 1.0:
+        if averageSentiment > 0.25 and <= 1.0:
             print "Positive average"
             print averageSentiment
-            template_vars["rating"] = "Positive - Average"
+            template_vars["rating"] = "On Average: Positive"
             template_vars["sentimentValueScore"] = averageSentiment
         elif averageSentiment < 0.25 and averageSentiment > -0.25:
             print "Neutral average"
             print averageSentiment
-            template_vars["rating"] = "Neutral - Average"
+            template_vars["rating"] = "On Average: Neutral"
             template_vars["sentimentValueScore"] = averageSentiment
         elif averageSentiment < -0.25:
             print "Negative average"
             print averageSentiment
-            template_vars["rating"] = "Negative - Average"
+            template_vars["rating"] = "On Average: Negative"
             emplate_vars["sentimentValueScore"] = averageSentiment
         else:
             print averageSentiment
