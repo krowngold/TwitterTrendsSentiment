@@ -1,15 +1,30 @@
 /* Main Page */
-@keyframes backgroundAnimation {
-  0%{background-position:51% 0%}
-  50%{background-position:50% 100%}
-  100%{background-position:51% 0%}
-}
+
 body {
-  background: linear-gradient(177deg, #1c19c3, #18bbec, #ec1818);
+  background: linear-gradient(271deg, #232fdf, #18e6e8, #e82914);
   background-size: 600% 600%;
-  animation: backgroundAnimation 10s ease infinite;
-  margin-top: 30px;
+  -webkit-animation: AnimationName 21s ease infinite;
+  -moz-animation: AnimationName 21s ease infinite;
+  animation: AnimationName 21s ease infinite;
+
 }
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 51%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 51%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 51%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 51%}
+}
+@keyframes AnimationName {
+    0%{background-position:0% 51%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 51%}
+}
+
 
 div.top_trends {
   padding-left: 35px;
@@ -26,9 +41,9 @@ div.top_trends {
   overflow: hidden;
   background-color: #e9e9e9;
   border-radius: 30px;
-  position: fixed; /* Set the navbar to fixed position */
-  top: 0; /* Position the navbar at the top of the page */
-  width: 100%; /* Full width */
+  /* position: fixed; /* Set the navbar to fixed position */ */
+  /* top: 0; /* Position the navbar at the top of the page */ */
+  /* width: 100%; /* Full width */ */
 }
 
 .topnav .topnav_buttons a{
@@ -174,10 +189,32 @@ div.trends_division {
 
 }
 
-.redirect {
+
+.alert {
+  padding: 20px;
   text-align: center;
-  border: 2px solid black;
-  box-shadow:
+  background-color: #f44336;
+  color: white;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-radius: 14px;
+}
+
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.closebtn:hover {
+  color: black;
 }
 
 /* About Us Page */

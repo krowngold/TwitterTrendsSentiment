@@ -23,16 +23,19 @@
       </div>
     </div>
 
-    <!-- <div class="redirect">
-      <h1>So there's a city called {{user_search}}? Here's United States though....</h1>
-    </div> -->
 
+    {% if user_search %}
+    <div class="alert">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      Either the town is too small or does not exist. Here's United States though....
+    </div>
+    {% endif %}
     <div class="trends_division">
     <h1 class="trends">Here's What's Happening Right Now In {{new_location}}:</h1>
       <div class = "top_trends">
         <ol>
           {% for i in range(10) %}
-          <li class = "grow"><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click'>{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
+          <li class = "grow"><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click' target = "_blank">{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
           {% endfor %}
         </ol>
       </div>
