@@ -127,10 +127,11 @@ class MainPage(webapp2.RequestHandler):
             return averageSentiment
 
 
-    def loadTrends(self, code=23424977, location = "Seattle"):
+    def loadTrends(self, code=3444, location = "Quebec"):
         pp = pprint.PrettyPrinter(indent=4)
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
+        # print trends
         top_trends = []
         while len(top_trends) < 10:
             max = trends[0]
@@ -142,6 +143,7 @@ class MainPage(webapp2.RequestHandler):
             trends.pop(temp)
             top_trends.append(max)
 
+        # print top_trends
         search_names = []
         for trend in top_trends:
             new_string = trend.name
@@ -154,15 +156,22 @@ class MainPage(webapp2.RequestHandler):
             new_string = ''.join(string_array)
             search_names.append(new_string)
 
-
+        # print search_names
         tweet_samples = []
         results = []
         for trend in search_names:
             results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31&count=5", return_json = True, lang = "English"))
 
+        # print results
         tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
+                # if len(status["statuses"]) == 0:
+                # pp.pprint(status)
+                # sys.exit()
+                # pp.pprint(type((status["statuses"])))
+                # pp.pprint(status["statuses"][0])
+                # status["statuses"][0]["full_text"]
                 if trend.name in status["statuses"][0]["full_text"]:
                     temp = status["statuses"]
                     if not temp:
