@@ -121,9 +121,9 @@ div.trends_division {
 
 }
 
-.location_feeling {
+.location_response {
   float: right;
-  height: 100px;
+  height: 100%;
   border: 2px solid black;
   box-shadow: 5px 5px;
   border-radius: 20px;
@@ -131,8 +131,8 @@ div.trends_division {
   background-color: #6495ED;
   margin-top: 20%;
   margin-bottom: 20%;
-  margin-right: 20%;
   margin-left: 20%;
+  /* margin-right: -20%; THIS TAG IS CAUSING THE BOX TO DISAPPEAR!!!*/
 }
 
 .response {

@@ -73,9 +73,7 @@ class MainPage(webapp2.RequestHandler):
     def loadTrends(self, code=23424977, location = "Seattle"):
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
-
         top_trends = []
-
         while len(top_trends) < 10:
             max = trends[0]
             temp = 0
@@ -83,12 +81,10 @@ class MainPage(webapp2.RequestHandler):
                 if (not trends[i].tweet_volume == None) and trends[i].tweet_volume > max.tweet_volume:
                     max = trends[i]
                     temp = i
-
             trends.pop(temp)
             top_trends.append(max)
 
         search_names = []
-
         for trend in top_trends:
             new_string = trend.name
             string_array = split(new_string)
@@ -101,16 +97,14 @@ class MainPage(webapp2.RequestHandler):
             search_names.append(new_string)
 
         tweet_samples = []
-
         pp = pprint.PrettyPrinter(indent=4)
         results = []
         for trend in search_names:
             results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-29&count=1", return_json = True, lang = "English"))
-
         for status in results:
             temp = status["statuses"]
             pp.pprint(temp)
-            # tweet_samples.append(temp[0]["full_text"])
+            tweet_samples.append(temp[0]["full_text"])
             # tweet_samples.append(temp[0]["full_text"])
 
         template_vars = {
@@ -119,7 +113,6 @@ class MainPage(webapp2.RequestHandler):
             "tweet_samples": tweet_samples,
             "new_location": location
         }
-
         return template_vars
 
     def city_search(self, input, city_list):
@@ -142,55 +135,55 @@ class MainPage(webapp2.RequestHandler):
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// - Sentiment Api analysis
-        api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
-        api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-        totalUrl = api_url + "?" + api_key#The total url to access the API
-        testList = ['I am very sad', 'I am very happy', 'I am not happy', 'I like you']
-        amountOfValues = len(testList)
-        for element in testList:
-            packageSent ={
-                "document" : {"type" : "PLAIN_TEXT",
-                              "content" : element
-                }
-            }
-            currentSentiment = getSentiment(packageSent)
-            if currentSentiment >= -1 and currentSentiment <= 1:
-                totalSentiment += currentSentiment
-            else:
-                errorAmount += 1
-        amountOfValues -= errorAmount
-        averageSentiment = totalSentiment/amountOfValues
-        if averageSentiment > 0.25 <= 1.0:
-            print "Positive average"
-        elif totalSentiment[score] < 0.25 and totalSentiment[score] > -0.25:
-            print "Neutral"
-        elif totalSentiment[score] < -0.25:
-            print "Negative"
-    def getSentiment(packageSent):
-        errorCheck = 2
-        print packageSent
-        print "\n"
-        print json.dumps(packageSent)
-        getSentiment = urlfetch.fetch(totalUrl,
-            method = urlfetch.POST,
-            payload = json.dumps(packageSent),
-            headers={'Content-Type': 'application/json'}
-        )
-        if getSentiment.status_code == 200:
-            returnedAPI = json.loads(getSentiment.content)
-            template_vars = {
-                'totalSentiment' : returnedAPI['documentSentiment']['score'],
-                'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
-            }
-            return totalSentiment['score']
-        elif getSentiment.status_code == 400:
-            message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
-            print message
-            return errorCheck
-        else:
-            message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
-            print message
-            return errorCheck
+    #     api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
+    #     api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+    #     totalUrl = api_url + "?" + api_key#The total url to access the API
+    #     testList = ['I am very sad', 'I am very happy', 'I am not happy', 'I like you']
+    #     amountOfValues = len(testList)
+    #     for element in testList:
+    #         packageSent ={
+    #             "document" : {"type" : "PLAIN_TEXT",
+    #                           "content" : element
+    #             }
+    #         }
+    #         currentSentiment = getSentiment(packageSent)
+    #         if currentSentiment >= -1 and currentSentiment <= 1:
+    #             totalSentiment += currentSentiment
+    #         else:
+    #             errorAmount += 1
+    #     amountOfValues -= errorAmount
+    #     averageSentiment = totalSentiment/amountOfValues
+    #     if averageSentiment > 0.25 <= 1.0:
+    #         print "Positive average"
+    #     elif totalSentiment[score] < 0.25 and totalSentiment[score] > -0.25:
+    #         print "Neutral"
+    #     elif totalSentiment[score] < -0.25:
+    #         print "Negative"
+    # def getSentiment(packageSent):
+    #     errorCheck = 2
+    #     print packageSent
+    #     print "\n"
+    #     print json.dumps(packageSent)
+    #     getSentiment = urlfetch.fetch(totalUrl,
+    #         method = urlfetch.POST,
+    #         payload = json.dumps(packageSent),
+    #         headers={'Content-Type': 'application/json'}
+    #     )
+    #     if getSentiment.status_code == 200:
+    #         returnedAPI = json.loads(getSentiment.content)
+    #         template_vars = {
+    #             'totalSentiment' : returnedAPI['documentSentiment']['score'],
+    #             'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
+    #         }
+    #         return totalSentiment['score']
+    #     elif getSentiment.status_code == 400:
+    #         message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
+    #         print message
+    #         return errorCheck
+    #     else:
+    #         message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
+    #         print message
+    #         return errorCheck
 
     def post(self):
         user_search = self.request.get("search")
