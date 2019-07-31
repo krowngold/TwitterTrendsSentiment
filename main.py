@@ -35,9 +35,6 @@ api = twitter.Api(consumer_key = consumer_key,
 #
 # from google.appengine.api import urlfetch
 
-
-print "file size: " + str(os.path.getsize('codebeautify.json'))
-# city_ids_file = open("codebeautify.json")
 with open('codebeautify.json') as f:
     city_ids = simplejson.loads(f.read())
 
