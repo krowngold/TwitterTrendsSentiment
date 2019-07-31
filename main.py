@@ -154,9 +154,9 @@ class MainPage(webapp2.RequestHandler):
         if averageSentiment > 0.25 <= 1.0:
             print "Positive average"
         elif totalSentiment[score] < 0.25 and totalSentiment[score] > -0.25:
-            print "Neutral"
+            print "Neutral average"
         elif totalSentiment[score] < -0.25:
-            print "Negative"
+            print "Negative average"
     def getSentiment(packageSent):
         errorCheck = 2
         print packageSent
@@ -182,7 +182,8 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
-
+        getSentiment.put()
+#to_dict() turns into python dictionary.
         def POST(self):
             if (self.response.get("search") in codebeautify.json):
                 template_vars = {
