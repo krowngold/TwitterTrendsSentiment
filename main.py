@@ -101,7 +101,7 @@ class MainPage(webapp2.RequestHandler):
         for trend in search_names:
             results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31&count=5", return_json = True, lang = "English"))
 
-        tweet_dict = {}
+        tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
                 if trend.name in status["statuses"][0]["full_text"]:
@@ -113,9 +113,9 @@ class MainPage(webapp2.RequestHandler):
                     elif not temp[0]["full_text"]:
                         print "no text in this status"
                     else:
-                        tweet_dict[trend.name] = temp[0]["full_text"]
+                        tweet_dictionary[trend.name] = temp[0]["full_text"]
 
-        pp.pprint(tweet_dict)
+        pp.pprint(tweet_dictionary)
 
 
 
@@ -128,7 +128,7 @@ class MainPage(webapp2.RequestHandler):
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
-            "tweet_dict": tweet_dict,
+            "tweet_dictionary": tweet_dictionary,
             "new_location": location
         }
         return template_vars
@@ -178,50 +178,43 @@ class MainPage(webapp2.RequestHandler):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
         template = jinja_env.get_template('templates/main.html')
+        totalSentiment = 0
+        rating = ""
+        errorAmount = 0
+        listOfTweets = template_vars["tweet_dictionary"]
+        amountOfValues = len(listOfTweets)
+        for element in listOfTweets:
+            packageSent ={
+                "document" : {"type" : "PLAIN_TEXT",
+                              "content" : element
+                }
+            }
+            currentSentiment = self.getSentiment(packageSent)
+            if currentSentiment >= -1 and currentSentiment <= 1:
+                totalSentiment += currentSentiment
+            else:
+                errorAmount += 1
+        amountOfValues -= errorAmount
+        averageSentiment = totalSentiment/amountOfValues
+        if averageSentiment > 0.25 <= 1.0:
+            print "Positive average"
+            print averageSentiment
+            template_vars["rating"] = "Positive - Average"
+            template_vars["sentimentValueScore"] = averageSentiment
+        elif averageSentiment < 0.25 and averageSentiment > -0.25:
+            print "Neutral average"
+            print averageSentiment
+            template_vars["rating"] = "Neutral - Average"
+            template_vars["sentimentValueScore"] = averageSentiment
+        elif averageSentiment < -0.25:
+            print "Negative average"
+            print averageSentiment
+            template_vars["rating"] = "Negative - Average"
+            emplate_vars["sentimentValueScore"] = averageSentiment
+        else:
+            print averageSentiment
+            print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
         self.response.write(template.render(template_vars))
-
-        # totalSentiment = 0
-        # rating = ""
-        # errorAmount = 0
-        # listOfTweets = template_vars["tweet_samples"]
-        # amountOfValues = len(listOfTweets)
-        # for element in listOfTweets:
-        #     packageSent ={
-        #         "document" : {"type" : "PLAIN_TEXT",
-        #                       "content" : element
-        #         }
-        #     }
-        #     currentSentiment = self.getSentiment(packageSent)
-        #     if currentSentiment >= -1 and currentSentiment <= 1:
-        #         totalSentiment += currentSentiment
-        #     else:
-        #         errorAmount += 1
-        # amountOfValues -= errorAmount
-        # averageSentiment = totalSentiment/amountOfValues
-        # if averageSentiment > 0.25 <= 1.0:
-        #     print "Positive average"
-        #     print averageSentiment
-        #     renderRatings = {
-        #         "rating" : "Positive - Average"
-        #     }
-        #     self.response.write(template.render(renderRatings))
-        # elif averageSentiment < 0.25 and averageSentiment > -0.25:
-        #     print "Neutral average"
-        #     print averageSentiment
-        #     renderRatings = {
-        #         "rating" : "Neutral - Average"
-        #     }
-        #     self.response.write(template.render(renderRatings))
-        # elif averageSentiment < -0.25:
-        #     print "Negative average"
-        #     print averageSentiment
-        #     renderRatings = {
-        #         "rating" : "Negative - Average"
-        #     }
-        #     self.response.write(template.render(renderRatings))
-        # else:
-        #     print averageSentiment
-        #     print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
 
     def post(self):
         user_search = self.request.get("search")
