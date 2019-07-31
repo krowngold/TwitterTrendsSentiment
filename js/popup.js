@@ -1,8 +1,12 @@
-let location = {{user_search}};
-
-function alertSmallTown () {
-  if alertSmallTown (user_search = user_search) {
-    alert("So there's a city called {{user_search}}? Here's United States though....")
-  }
-
-};
+// let city_search = document.querySelector('input[type=text]')
+//
+// function townSmall (city_search) {
+//   fetch ('/', {
+//     method: 'city_search'
+//     headers: {
+//       'Content-Type': 'application/py',
+//     }  
+//     body:
+//     }
+//   })
+// }

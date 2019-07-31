@@ -159,10 +159,32 @@ div.trends_division {
 
 }
 
-.redirect {
+
+.alert {
+  padding: 20px;
   text-align: center;
-  border: 2px solid black;
-  box-shadow:
+  background-color: #f44336;
+  color: white;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-radius: 14px;
+}
+
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.closebtn:hover {
+  color: black;
 }
 
 /* About Us Page */
