@@ -13,11 +13,6 @@ from google.appengine.ext import ndb
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-# consumer_key = "PTHIXCLxsNtC7vOncS6vzHiBu"
-# consumer_secret = "dl7jsDCHwcB7XHoAY7FZcLSY8ktbCzmnxXZckNgNi0CtoWWvNz"
-# access_token = "3080354129-r8HhnjK4eYZUG9BopJMgq0cPf7BEmRtrCmEuuIf"
-# access_token_secret = "bJ6pCD4zQg7wLSV03TehGF6iL8WkDaUscij7lvTT7puHc"
-
 with open("twitter_credentials.json") as f:
     creds = simplejson.loads(f.read())
     for cred in creds:
@@ -26,36 +21,22 @@ with open("twitter_credentials.json") as f:
         access_token = cred["access_token"]
         access_token_secret = cred["access_token_secret"]
 
-api = twitter.Api(consumer_key = consumer_key,
-    consumer_secret=consumer_secret,
-    access_token_key= access_token,
-    access_token_secret= access_token_secret,
-    tweet_mode="extended")
-# import urllib
-#
-# from google.appengine.api import urlfetch
-
-with open('codebeautify.json') as f:
-    city_ids = simplejson.loads(f.read())
-
-#///////// - Jason Li
-# import argparse
-# from google.cloud import language
-# from google.cloud.language import enums
-# from google.cloud.language import types
-# from google.cloud import language
-# from google.oauth2 import service_account
-#///////// - Jason Li
-
-import urllib
-from google.appengine.api import urlfetch
+    api = twitter.Api(consumer_key = consumer_key,
+        consumer_secret=consumer_secret,
+        access_token_key= access_token,
+        access_token_secret= access_token_secret,
+        tweet_mode="extended")
+    with open('codebeautify.json') as f:
+        city_ids = simplejson.loads(f.read())
+    import urllib
+    from google.appengine.api import urlfetch
 
 
-jinja_env = jinja2.Environment(
-    loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
+    jinja_env = jinja2.Environment(
+        loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
-def split(word):
-    return [char for char in word]
+    def split(word):
+        return [char for char in word]
 
 class Tweet(ndb.Model):
     text = ndb.StringProperty(required = True)
@@ -127,38 +108,10 @@ class MainPage(webapp2.RequestHandler):
                 return city["woeid"]
         return 1
 
-
-    def get(self):
-        print "\n\n\nIN MAIN PAGE\n\n\n"
-        template_vars = self.loadTrends()
-
-        template = jinja_env.get_template('templates/main.html')
-        self.response.write(template.render(template_vars))
+    def getSentiment(self,packageSent):
         api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
         api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
         totalUrl = api_url + "?" + api_key#The total url to access the API
-        testList = ['I am very sad', 'I am very happy', 'I am not happy', 'I like you']
-        amountOfValues = len(testList)
-        for element in testList:
-            packageSent ={
-                "document" : {"type" : "PLAIN_TEXT",
-                              "content" : element
-                }
-            }
-            currentSentiment = getSentiment(packageSent)
-            if currentSentiment >= -1 and currentSentiment <= 1:
-                totalSentiment += currentSentiment
-            else:
-                errorAmount += 1
-        amountOfValues -= errorAmount
-        averageSentiment = totalSentiment/amountOfValues
-        if averageSentiment > 0.25 <= 1.0:
-            print "Positive average"
-        elif totalSentiment[score] < 0.25 and totalSentiment[score] > -0.25:
-            print "Neutral average"
-        elif totalSentiment[score] < -0.25:
-            print "Negative average"
-    def getSentiment(packageSent):
         errorCheck = 2
         print packageSent
         print "\n"
@@ -174,7 +127,7 @@ class MainPage(webapp2.RequestHandler):
                 'totalSentiment' : returnedAPI['documentSentiment']['score'],
                 'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
             }
-            return totalSentiment['score']
+            return template_vars['totalSentiment']
         elif getSentiment.status_code == 400:
             message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
             print message
@@ -183,8 +136,54 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
-        getSentiment.put()
-#to_dict() turns into python dictionary.
+    def get(self):
+        print "\n\n\nIN MAIN PAGE\n\n\n"
+        template_vars = self.loadTrends()
+        template = jinja_env.get_template('templates/main.html')
+        totalSentiment = 0
+        rating = ""
+        errorAmount = 0
+        self.response.write(template.render(template_vars))
+        listOfTweets = template_vars["tweet_samples"]
+        amountOfValues = len(listOfTweets)
+        for element in listOfTweets:
+            packageSent ={
+                "document" : {"type" : "PLAIN_TEXT",
+                              "content" : element
+                }
+            }
+            currentSentiment = self.getSentiment(packageSent)
+            if currentSentiment >= -1 and currentSentiment <= 1:
+                totalSentiment += currentSentiment
+            else:
+                errorAmount += 1
+        amountOfValues -= errorAmount
+        averageSentiment = totalSentiment/amountOfValues
+        if averageSentiment > 0.25 <= 1.0:
+            print "Positive average"
+            print averageSentiment
+            renderRatings = {
+                "rating" : "Positive - Average"
+            }
+            self.response.write(template.render(renderRatings))
+        elif averageSentiment < 0.25 and averageSentiment > -0.25:
+            print "Neutral average"
+            print averageSentiment
+            renderRatings = {
+                "rating" : "Neutral - Average"
+            }
+            self.response.write(template.render(renderRatings))
+        elif averageSentiment < -0.25:
+            print "Negative average"
+            print averageSentiment
+            renderRatings = {
+                "rating" : "Negative - Average"
+            }
+            self.response.write(template.render(renderRatings))
+        else:
+            print averageSentiment
+            print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
+    #to_dict() turns into python dictionary.
         def POST(self):
             if (self.response.get("search") in codebeautify.json):
                 template_vars = {
@@ -195,6 +194,7 @@ class MainPage(webapp2.RequestHandler):
             else:
                 template = jinja_env.get_template("templates/main.html")
                 self.response.write(template.render())
+
     #     api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
     #     api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
     #     totalUrl = api_url + "?" + api_key#The total url to access the API
