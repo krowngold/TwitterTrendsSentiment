@@ -9,10 +9,19 @@ import pprint
 import simplejson
 from google.appengine.api import users
 from google.appengine.ext import ndb
+import urllib
+from google.appengine.api import urlfetch
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+
+jinja_env = jinja2.Environment(
+    loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
+
+'''
+    Unpacking twitter credentials and retrieving woeid numbers from separate json files
+'''
 with open("twitter_credentials.json") as f:
     creds = simplejson.loads(f.read())
     for cred in creds:
@@ -26,18 +35,20 @@ with open("twitter_credentials.json") as f:
         access_token_key= access_token,
         access_token_secret= access_token_secret,
         tweet_mode="extended")
-    with open('codebeautify.json') as f:
-        city_ids = simplejson.loads(f.read())
-    import urllib
-    from google.appengine.api import urlfetch
+with open('codebeautify.json') as f:
+    city_ids = simplejson.loads(f.read())
 
 
-    jinja_env = jinja2.Environment(
-        loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
+'''
+    Global methods
+'''
+def split(word):
+    return [char for char in word]
 
-    def split(word):
-        return [char for char in word]
 
+'''
+    All the models for the website. Not sure if we're going to implement them.
+'''
 class Tweet(ndb.Model):
     text = ndb.StringProperty(required = True)
     date = ndb.StringProperty(required = True)
@@ -50,8 +61,15 @@ class Trend(ndb.Model):
 class Location(ndb.Model):
     name = ndb.StringProperty(required = True)
 
+
+'''
+    All handlers for the website
+'''
+
 class MainPage(webapp2.RequestHandler):
+
     def loadTrends(self, code=23424977, location = "Seattle"):
+        pp = pprint.PrettyPrinter(indent=4)
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
         top_trends = []
@@ -77,24 +95,40 @@ class MainPage(webapp2.RequestHandler):
             new_string = ''.join(string_array)
             search_names.append(new_string)
 
+
         tweet_samples = []
-        pp = pprint.PrettyPrinter(indent=4)
         results = []
         for trend in search_names:
-            results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-29&count=1", return_json = True, lang = "English"))
+            results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31&count=5", return_json = True, lang = "English"))
 
-        pp.pprint(results)
+        tweet_dict = {}
+        for trend in top_trends:
+            for status in results:
+                if trend.name in status["statuses"][0]["full_text"]:
+                    temp = status["statuses"]
+                    if not temp:
+                        print "exiting status[statuses]"
+                    elif not temp[0]:
+                        print "exiting dictionary"
+                    elif not temp[0]["full_text"]:
+                        print "no text in this status"
+                    else:
+                        tweet_dict[trend.name] = temp[0]["full_text"]
 
-        # for status in results:
-        #     temp = status["statuses"]
-        #     pp.pprint(temp)
-        #     # tweet_samples.append(temp[0]["full_text"])
+        pp.pprint(tweet_dict)
+
+
+
+        # pp.pprint(tweet_dict)
+            # print ("\n\nNEW STATUS")
+            # pp.pprint(temp)
+        #     tweet_samples.append(temp[0]["full_text"])
         #     tweet_samples.append(temp[0]["full_text"])
 
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
-            "tweet_samples": tweet_samples,
+            "tweet_dict": tweet_dict,
             "new_location": location
         }
         return template_vars
@@ -144,110 +178,50 @@ class MainPage(webapp2.RequestHandler):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
         template = jinja_env.get_template('templates/main.html')
-        totalSentiment = 0
-        rating = ""
-        errorAmount = 0
         self.response.write(template.render(template_vars))
-        listOfTweets = template_vars["tweet_samples"]
-        amountOfValues = len(listOfTweets)
-        for element in listOfTweets:
-            packageSent ={
-                "document" : {"type" : "PLAIN_TEXT",
-                              "content" : element
-                }
-            }
-            currentSentiment = self.getSentiment(packageSent)
-            if currentSentiment >= -1 and currentSentiment <= 1:
-                totalSentiment += currentSentiment
-            else:
-                errorAmount += 1
-        amountOfValues -= errorAmount
-        averageSentiment = totalSentiment/amountOfValues
-        if averageSentiment > 0.25 <= 1.0:
-            print "Positive average"
-            print averageSentiment
-            renderRatings = {
-                "rating" : "Positive - Average"
-            }
-            self.response.write(template.render(renderRatings))
-        elif averageSentiment < 0.25 and averageSentiment > -0.25:
-            print "Neutral average"
-            print averageSentiment
-            renderRatings = {
-                "rating" : "Neutral - Average"
-            }
-            self.response.write(template.render(renderRatings))
-        elif averageSentiment < -0.25:
-            print "Negative average"
-            print averageSentiment
-            renderRatings = {
-                "rating" : "Negative - Average"
-            }
-            self.response.write(template.render(renderRatings))
-        else:
-            print averageSentiment
-            print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
-    #to_dict() turns into python dictionary.
-    def POST(self):
-        if (self.response.get("search") in codebeautify.json):
-            template_vars = {
-                "new_location": self.response.get("search")
-            }
-            template = jinja_env.get_template("templates/main.html")
-            self.response.write(template.render(new_location))
-        else:
-            template = jinja_env.get_template("templates/main.html")
-            self.response.write(template.render())
 
-    #     api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
-    #     api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-    #     totalUrl = api_url + "?" + api_key#The total url to access the API
-    #     testList = ['I am very sad', 'I am very happy', 'I am not happy', 'I like you']
-    #     amountOfValues = len(testList)
-    #     for element in testList:
-    #         packageSent ={
-    #             "document" : {"type" : "PLAIN_TEXT",
-    #                           "content" : element
-    #             }
-    #         }
-    #         currentSentiment = getSentiment(packageSent)
-    #         if currentSentiment >= -1 and currentSentiment <= 1:
-    #             totalSentiment += currentSentiment
-    #         else:
-    #             errorAmount += 1
-    #     amountOfValues -= errorAmount
-    #     averageSentiment = totalSentiment/amountOfValues
-    #     if averageSentiment > 0.25 <= 1.0:
-    #         print "Positive average"
-    #     elif totalSentiment[score] < 0.25 and totalSentiment[score] > -0.25:
-    #         print "Neutral"
-    #     elif totalSentiment[score] < -0.25:
-    #         print "Negative"
-    # def getSentiment(packageSent):
-    #     errorCheck = 2
-    #     print packageSent
-    #     print "\n"
-    #     print json.dumps(packageSent)
-    #     getSentiment = urlfetch.fetch(totalUrl,
-    #         method = urlfetch.POST,
-    #         payload = json.dumps(packageSent),
-    #         headers={'Content-Type': 'application/json'}
-    #     )
-    #     if getSentiment.status_code == 200:
-    #         returnedAPI = json.loads(getSentiment.content)
-    #         template_vars = {
-    #             'totalSentiment' : returnedAPI['documentSentiment']['score'],
-    #             'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
-    #         }
-    #         return totalSentiment['score']
-    #     elif getSentiment.status_code == 400:
-    #         message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
-    #         print message
-    #         return errorCheck
-    #     else:
-    #         message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
-    #         print message
-    #         return errorCheck
+        # totalSentiment = 0
+        # rating = ""
+        # errorAmount = 0
+        # listOfTweets = template_vars["tweet_samples"]
+        # amountOfValues = len(listOfTweets)
+        # for element in listOfTweets:
+        #     packageSent ={
+        #         "document" : {"type" : "PLAIN_TEXT",
+        #                       "content" : element
+        #         }
+        #     }
+        #     currentSentiment = self.getSentiment(packageSent)
+        #     if currentSentiment >= -1 and currentSentiment <= 1:
+        #         totalSentiment += currentSentiment
+        #     else:
+        #         errorAmount += 1
+        # amountOfValues -= errorAmount
+        # averageSentiment = totalSentiment/amountOfValues
+        # if averageSentiment > 0.25 <= 1.0:
+        #     print "Positive average"
+        #     print averageSentiment
+        #     renderRatings = {
+        #         "rating" : "Positive - Average"
+        #     }
+        #     self.response.write(template.render(renderRatings))
+        # elif averageSentiment < 0.25 and averageSentiment > -0.25:
+        #     print "Neutral average"
+        #     print averageSentiment
+        #     renderRatings = {
+        #         "rating" : "Neutral - Average"
+        #     }
+        #     self.response.write(template.render(renderRatings))
+        # elif averageSentiment < -0.25:
+        #     print "Negative average"
+        #     print averageSentiment
+        #     renderRatings = {
+        #         "rating" : "Negative - Average"
+        #     }
+        #     self.response.write(template.render(renderRatings))
+        # else:
+        #     print averageSentiment
+        #     print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
 
     def post(self):
         user_search = self.request.get("search")
@@ -259,130 +233,12 @@ class MainPage(webapp2.RequestHandler):
         template = jinja_env.get_template("templates/main.html")
         self.response.write(template.render(template_vars))
 
-
-
-
-        #//////////////////////////////////////////////////////////////////////////////////////////
-        # api_key = "4da7e0a5920ffb13aadf6e83ee7ae01ed5e6ae27"#Key to let you access to API
-        # api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-        # totalUrl = api_url + "?" + api_key#The total url
-        # packageSent = urllib.urlencode({#The information being sent to the API
-        # #somehow get information from noah to put inside here
-        # #and pass the information to the sentiment API
-        # #lists inside dictionary
-        #     "Request_body" : "My name is jason li, i am very happy"
-        # })
-        # getSentiment = urlfetch.fetch(totalUrl,
-        #     method = urlfetch.POST,
-        #     packageSent = packageSent
-        # )
-        # if getSentiment.status_code == 200:
-        #     returnedAPI = json.loads(getSentiment.content)
-        # elif getSentiment.status_code == 400:
-        #     message = "Invalid Value/Input, please try again"
-        # else:
-        #     message = "Something went wrong going into API" + str(result.status_code) + " " + str(result.content)
-        #     ErrorNotification.new(msg)
-        # template_vars = {
-        #     'totalSentiment' : returnedAPI['documentSentiment']['score'],
-        #     'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
-        # }
-#         api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
-#         api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-#         totalUrl = api_url + "?" + api_key#The total url
-# #The information being sent to the API
-# #somehow get information from noah to put inside here
-# #and pass the information to the sentiment API
-# #lists inside dictionary
-#         packageSent ={
-#             "document" : {"type" : "PLAIN_TEXT",
-#                           "content" : "My name is jason and im very happy"
-#             }
-#         }
-#         print packageSent
-#         print "\n"
-#         print json.dumps(packageSent)
-#         getSentiment = urlfetch.fetch(totalUrl,
-#             method = urlfetch.POST,
-#             payload = json.dumps(packageSent),
-#             headers={'Content-Type': 'application/json'}
-#         )
-#
-#         if getSentiment.status_code == 200:
-#             returnedAPI = json.loads(getSentiment.content)
-#             template_vars = {
-#                 'totalSentiment' : returnedAPI['documentSentiment']['score'],
-#                 'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
-#             }
-#             print template_vars
-#             print("Checking 123")
-#         elif getSentiment.status_code == 400:
-#             message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
-#             print message
-#         else:
-#             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
-#             print message
-        #/////////////////////////////////////////////////////////////////////////////////////////////
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
-class Info(webapp2.RequestHandler):
-    def get(self):
-        template_vars = {
-            "tweets": tweets
-        }
-        template = jinja_env.get_template('templates/info.html')
-        self.response.write(template.render())
-
-# class sentiment_analysis(webapp2.RequestHandler):
-    #This allows access to the paid API
-    # creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
-    # client = language.LanguageServiceClient(
-    #     credentials = creds,
-    # )
-    # def get(self)
-# api_key = "key"#Type the Api KEY
-# base_url = api url get#Get the url for the api
-# params = {'q' : 'Harry Potter', 'key' : api_key,}#TYPE IN THE PARAMTERS TO CALL FOR INFORMATION
-# urllib.urlencodee(param)
-# full_url = base_url + "?" + urllib.urlencode(params)
-#
-# #fetch url
-# books_reponse = urlfetch.fetch(full_url).content
-# #get json response and convert to a dictionary
-# dictionary = json.loads(books_response)
-#
-# template_vars = {
-#     'books' : books_dictionary['items'],
-#     }
-# book[x][a] in order to get the stuff from the dictionary.
-
-# class sentiment_analysis(webapp2.RequestHandler):
-#     #This allows access to the paid API
-#     creds = service_account.Credentials.from_service_account_file('/Users/cssi/Desktop/TheFinalProject/TwitterTrendsSentiment/key.json')
-#     client = language.LanguageServiceClient(
-#         credentials = creds,
-#     )
-    #This funciton will return the values given by the API
-    # def analyze(#someText from the file names of positivie.txt and negative.txt, should be the only passed parameters
-    # ):
-        #
-    #def print():
-        #print out the things that analyze() returns
-        #check in the command line for the results
-        #print it out via the website later on
-
-
-#Where do i put access token?
-#How do I stop accessing the api
-#how do I cache the files?
-
-
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs),
-    # ('/info', Info)
-    # ('/', sentiment_analysis)
 ], debug=True)
