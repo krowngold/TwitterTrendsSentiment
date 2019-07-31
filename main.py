@@ -65,6 +65,67 @@ class Location(ndb.Model):
 '''
 
 class MainPage(webapp2.RequestHandler):
+    def getSentiment(self,packageSent):
+        api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
+        api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+        totalUrl = api_url + "?" + api_key#The total url to access the API
+        errorCheck = 2
+        print packageSent
+        print "\n"
+        print json.dumps(packageSent)
+        getSentiment = urlfetch.fetch(totalUrl,
+            method = urlfetch.POST,
+            payload = json.dumps(packageSent),
+            headers={'Content-Type': 'application/json'}
+        )
+        if getSentiment.status_code == 200:
+            returnedAPI = json.loads(getSentiment.content)
+            template_vars = {
+                'totalSentiment' : returnedAPI['documentSentiment']['score'],
+                'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
+            }
+            return template_vars['totalSentiment']
+        elif getSentiment.status_code == 400:
+            message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
+            print message
+            return errorCheck
+        else:
+            message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
+            print message
+            return errorCheck
+
+    def calculateSentiment(self, dictionary):
+        totalSentiment = 0
+        rating = ""
+        errorAmount = 0
+        amountOfValues = len(dictionary)
+        # print amountOfValues
+        # print dictionary
+        for key in dictionary:
+            packageSent ={
+                "document" : {"type" : "PLAIN_TEXT",
+                              "content" : dictionary[key]
+                }
+            }
+            currentSentiment = self.getSentiment(packageSent)
+            if currentSentiment >= -1 and currentSentiment <= 1:
+                totalSentiment += currentSentiment
+            else:
+                errorAmount += 1
+        amountOfValues -= errorAmount
+        # print errorAmount
+        averageSentiment = totalSentiment
+        # print averageSentiment
+        if averageSentiment > 0.05 <= 10:
+            return averageSentiment
+        elif averageSentiment < 0.05 and averageSentiment > -0.05:
+            return averageSentiment
+        elif averageSentiment < -0.05:
+            return averageSentiment
+        else:
+            print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
+            return averageSentiment
+
 
     def loadTrends(self, code=23424977, location = "Seattle"):
         pp = pprint.PrettyPrinter(indent=4)
@@ -113,22 +174,22 @@ class MainPage(webapp2.RequestHandler):
                     else:
                         tweet_dictionary[trend.name] = temp[0]["full_text"]
 
-        pp.pprint(tweet_dictionary)
-
-
-
-        # pp.pprint(tweet_dict)
-            # print ("\n\nNEW STATUS")
-            # pp.pprint(temp)
-        #     tweet_samples.append(temp[0]["full_text"])
-        #     tweet_samples.append(temp[0]["full_text"])
-
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
             "tweet_dictionary": tweet_dictionary,
             "new_location": location
         }
+
+        template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
+        # print template_vars["sentimentValueScore"]
+        if template_vars["sentimentValueScore"] > 0.25 and template_vars["sentimentValueScore"] <= 1.0:
+            template_vars["rating"] = "Positive"
+        elif template_vars["sentimentValueScore"] < 0.25 and template_vars["sentimentValueScore"] > -0.25:
+            template_vars["rating"] = "Neutral"
+        else:
+            template_vars["rating"] = "Negative"
+        # print template_vars["rating"]
         return template_vars
 
     def city_search(self, input, city_list):
@@ -143,76 +204,14 @@ class MainPage(webapp2.RequestHandler):
                 return city["woeid"]
         return 1
 
-    def getSentiment(self,packageSent):
-        api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
-        api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-        totalUrl = api_url + "?" + api_key#The total url to access the API
-        errorCheck = 2
-        print packageSent
-        print "\n"
-        print json.dumps(packageSent)
-        getSentiment = urlfetch.fetch(totalUrl,
-            method = urlfetch.POST,
-            payload = json.dumps(packageSent),
-            headers={'Content-Type': 'application/json'}
-        )
-        if getSentiment.status_code == 200:
-            returnedAPI = json.loads(getSentiment.content)
-            template_vars = {
-                'totalSentiment' : returnedAPI['documentSentiment']['score'],
-                'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
-            }
-            return template_vars['totalSentiment']
-        elif getSentiment.status_code == 400:
-            message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
-            print message
-            return errorCheck
-        else:
-            message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
-            print message
-            return errorCheck
-
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
+        print template_vars["rating"]
+        print template_vars["sentimentValueScore"]
         template = jinja_env.get_template('templates/main.html')
-        totalSentiment = 0
-        rating = ""
-        errorAmount = 0
-        listOfTweets = template_vars["tweet_dictionary"]
-        amountOfValues = len(listOfTweets)
-        for element in listOfTweets:
-            packageSent ={
-                "document" : {"type" : "PLAIN_TEXT",
-                              "content" : element
-                }
-            }
-            currentSentiment = self.getSentiment(packageSent)
-            if currentSentiment >= -1 and currentSentiment <= 1:
-                totalSentiment += currentSentiment
-            else:
-                errorAmount += 1
-        amountOfValues -= errorAmount
-        averageSentiment = totalSentiment/amountOfValues
-        if averageSentiment > 0.25 and <= 1.0:
-            print "Positive average"
-            print averageSentiment
-            template_vars["rating"] = "On Average: Positive"
-            template_vars["sentimentValueScore"] = averageSentiment
-        elif averageSentiment < 0.25 and averageSentiment > -0.25:
-            print "Neutral average"
-            print averageSentiment
-            template_vars["rating"] = "On Average: Neutral"
-            template_vars["sentimentValueScore"] = averageSentiment
-        elif averageSentiment < -0.25:
-            print "Negative average"
-            print averageSentiment
-            template_vars["rating"] = "On Average: Negative"
-            emplate_vars["sentimentValueScore"] = averageSentiment
-        else:
-            print averageSentiment
-            print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
         self.response.write(template.render(template_vars))
+
 
     def post(self):
         user_search = self.request.get("search")
