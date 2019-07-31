@@ -123,7 +123,7 @@ div.trends_division {
 
 }
 
-.location_feeling {
+.location_response {
   float: right;
   height: 100px;
   border: 2px solid black;
@@ -133,7 +133,7 @@ div.trends_division {
   background-color: #6495ED;
   margin-top: 20%;
   margin-bottom: 20%;
-  margin-right: 20%;
+  /* margin-right: 20%; */
   margin-left: 20%;
 }
 
