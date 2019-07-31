@@ -113,7 +113,7 @@ class MainPage(webapp2.RequestHandler):
                     elif not temp[0]["full_text"]:
                         print "no text in this status"
                     else:
-                        tweet_dict[trend.name] = temp[0]["full_text"]
+                        tweet_dictionary[trend.name] = temp[0]["full_text"]
 
         pp.pprint(tweet_dictionary)
 
@@ -128,7 +128,7 @@ class MainPage(webapp2.RequestHandler):
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
-            "tweet_dict": tweet_dictionary,
+            "tweet_dictionary": tweet_dictionary,
             "new_location": location
         }
         return template_vars
@@ -178,11 +178,10 @@ class MainPage(webapp2.RequestHandler):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
         template = jinja_env.get_template('templates/main.html')
-        self.response.write(template.render(template_vars))
         totalSentiment = 0
         rating = ""
         errorAmount = 0
-        listOfTweets = template_vars[]
+        listOfTweets = template_vars["tweet_dictionary"]
         amountOfValues = len(listOfTweets)
         for element in listOfTweets:
             packageSent ={
@@ -200,27 +199,22 @@ class MainPage(webapp2.RequestHandler):
         if averageSentiment > 0.25 <= 1.0:
             print "Positive average"
             print averageSentiment
-            renderRatings = {
-                "rating" : "Positive - Average"
-            }
-            self.response.write(template.render(renderRatings))
+            template_vars["rating"] = "Positive - Average"
+            template_vars["sentimentValueScore"] = averageSentiment
         elif averageSentiment < 0.25 and averageSentiment > -0.25:
             print "Neutral average"
             print averageSentiment
-            renderRatings = {
-                "rating" : "Neutral - Average"
-            }
-            self.response.write(template.render(renderRatings))
+            template_vars["rating"] = "Neutral - Average"
+            template_vars["sentimentValueScore"] = averageSentiment
         elif averageSentiment < -0.25:
             print "Negative average"
             print averageSentiment
-            renderRatings = {
-                "rating" : "Negative - Average"
-            }
-            self.response.write(template.render(renderRatings))
+            template_vars["rating"] = "Negative - Average"
+            emplate_vars["sentimentValueScore"] = averageSentiment
         else:
             print averageSentiment
             print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
+        self.response.write(template.render(template_vars))
 
     def post(self):
         user_search = self.request.get("search")
