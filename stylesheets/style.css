@@ -1,6 +1,13 @@
 /* Main Page */
+@keyframes backgroundAnimation {
+  0%{background-position:51% 0%}
+  50%{background-position:50% 100%}
+  100%{background-position:51% 0%}
+}
 body {
-  background-image: linear-gradient(to right, #87CEFA, #00BFFF, #1E90FF);
+  background: linear-gradient(177deg, #1c19c3, #18bbec, #ec1818);
+  background-size: 600% 600%;
+  animation: backgroundAnimation 30s ease infinite;
 }
 
 .logo {
@@ -14,6 +21,7 @@ body {
   overflow: hidden;
   background-color: #e9e9e9;
   border-radius: 30px;
+
 }
 
 .topnav .topnav_buttons a{
@@ -25,6 +33,10 @@ body {
   padding: 14px 16px;
   text-decoration: none;
   font-size: 17px;
+}
+
+.topnav_buttons {
+  width: 30%;
 }
 
 .active {
@@ -43,7 +55,9 @@ li {
 }
 
 .search-container {
-  float: right;
+  display: flex;
+  width: 30%;
+  justify-content: flex-end;
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -57,7 +71,6 @@ li {
 }
 
 .topnav .search-container button {
-  float: right;
   padding: 6px;
   margin-top: 8px;
   margin-right: 16px;
