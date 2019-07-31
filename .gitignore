@@ -1,4 +1,4 @@
 lib
 lib2
 *.pyc
-*.json
+twitter_credentials.json

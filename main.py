@@ -6,13 +6,25 @@ import json
 import twitter
 import sys
 import pprint
+import simplejson
+from google.appengine.api import users
+from google.appengine.ext import ndb
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-consumer_key = "PTHIXCLxsNtC7vOncS6vzHiBu"
-consumer_secret = "dl7jsDCHwcB7XHoAY7FZcLSY8ktbCzmnxXZckNgNi0CtoWWvNz"
-access_token = "3080354129-r8HhnjK4eYZUG9BopJMgq0cPf7BEmRtrCmEuuIf"
-access_token_secret = "bJ6pCD4zQg7wLSV03TehGF6iL8WkDaUscij7lvTT7puHc"
+# consumer_key = "PTHIXCLxsNtC7vOncS6vzHiBu"
+# consumer_secret = "dl7jsDCHwcB7XHoAY7FZcLSY8ktbCzmnxXZckNgNi0CtoWWvNz"
+# access_token = "3080354129-r8HhnjK4eYZUG9BopJMgq0cPf7BEmRtrCmEuuIf"
+# access_token_secret = "bJ6pCD4zQg7wLSV03TehGF6iL8WkDaUscij7lvTT7puHc"
+
+with open("twitter_credentials.json") as f:
+    creds = simplejson.loads(f.read())
+    for cred in creds:
+        consumer_key = cred["consumer_key"]
+        consumer_secret = cred["consumer_secret"]
+        access_token = cred["access_token"]
+        access_token_secret = cred["access_token_secret"]
 
 api = twitter.Api(consumer_key = consumer_key,
     consumer_secret=consumer_secret,
@@ -23,16 +35,12 @@ api = twitter.Api(consumer_key = consumer_key,
 #
 # from google.appengine.api import urlfetch
 
-# pjson = codebeautify.json.read()
-# pdata = json.loads(pjson)
-# print pdata
-city_ids = None
-with open("codebeautify.json") as json_file:
-    city_ids = json.load(json_file)
-    for city in city_id:
-        print "Name: " + city["name"]
-        print "Woeid: " + city["woeid"]
-        print "\n\n"
+
+print "file size: " + str(os.path.getsize('codebeautify.json'))
+# city_ids_file = open("codebeautify.json")
+with open('codebeautify.json') as f:
+    city_ids = simplejson.loads(f.read())
+
 #///////// - Jason Li
 # import argparse
 # from google.cloud import language
@@ -41,38 +49,10 @@ with open("codebeautify.json") as json_file:
 # from google.cloud import language
 # from google.oauth2 import service_account
 #///////// - Jason Li
-# import tweepy not sure how this one works
-# from twitter import twitter
-# from TwitterAPI import TwitterAPI
 
 import urllib
 from google.appengine.api import urlfetch
 
-# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-# auth.set_access_token(access_token, access_token_secret)
-
-# api = tweepy.API(auth)
-#
-# trends1=api.trends_place(1)
-#
-# data = trends1[0]
-# trends=data['trends']
-# names = [trend['name'] for trend in trends]
-# # put all the names together with a ' ' separating them
-# trendsName = ' '.join(names)
-# print(trendsName)
-
-# How do I use my authorization keys without being prone to security issues?
-# One website tells me to store my keys as a json file but idk how to do that
-# credentials = {}
-# credentials['CONSUMER_KEY'] = ...
-# credentials['CONSUMER_SECRET'] = ...
-# credentials['ACCESS_TOKEN'] = ...
-# credentials['ACCESS_SECRET'] = ...
-#
-# with open("twitter_credentials.json", "w") as file:
-#     json.dump(credentials, file)
-#     print "dumped files"
 
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -80,11 +60,21 @@ jinja_env = jinja2.Environment(
 def split(word):
     return [char for char in word]
 
-class MainPage(webapp2.RequestHandler):
-    def get(self):
-        print "\n\n\nIN MAIN PAGE\n\n\n"
+class Tweet(ndb.Model):
+    text = ndb.StringProperty(required = True)
+    date = ndb.StringProperty(required = True)
 
-        trends = api.GetTrendsWoeid(23424977, exclude = None)
+class Trend(ndb.Model):
+    title = ndb.StringProperty(required = True)
+    num_tweets = ndb.IntegerProperty(required = True)
+    date = ndb.StringProperty(required = True)
+
+class Location(ndb.Model):
+    name = ndb.StringProperty(required = True)
+
+class MainPage(webapp2.RequestHandler):
+    def loadTrends(self, code=23424977, location = "Seattle"):
+        trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
 
         top_trends = []
@@ -122,27 +112,52 @@ class MainPage(webapp2.RequestHandler):
 
         for status in results:
             temp = status["statuses"]
-            tweet_samples.append(temp[0]["full_text"])
+            pp.pprint(temp)
+            # tweet_samples.append(temp[0]["full_text"])
+            # tweet_samples.append(temp[0]["full_text"])
 
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
-            "tweet_samples": tweet_samples
+            "tweet_samples": tweet_samples,
+            "new_location": location
         }
+
+        return template_vars
+
+    def city_search(self, input, city_list):
+        for city in city_list:
+            if city["name"] == input:
+                return True
+        return False
+
+    def city_code(self, input, city_list):
+        for city in city_list:
+            if city["name"] == input:
+                return city["woeid"]
+        return 1
+
+
+    def get(self):
+        print "\n\n\nIN MAIN PAGE\n\n\n"
+        template_vars = self.loadTrends()
 
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
 
-        def POST(self):
-            if (self.response.get("search") in codebeautify.json):
-                template_vars = {
-                    "new_location": self.response.get("search")
-                }
-                template = jinja_env.get_template("templates/main.html")
-                self.response.write(template.render(new_location))
-            else:
-                template = jinja_env.get_template("templates/main.html")
-                self.response.write(template.render())
+    def post(self):
+        user_search = self.request.get("search")
+        if (self.city_search(user_search, city_ids)):
+            template_vars = self.loadTrends(self.city_code(user_search, city_ids), user_search)
+        else:
+            template_vars = self.loadTrends(2352824, "The United States")
+        template_vars.update()
+        template = jinja_env.get_template("templates/main.html")
+        self.response.write(template.render(template_vars))
+
+
+
+
         #//////////////////////////////////////////////////////////////////////////////////////////
         # api_key = "4da7e0a5920ffb13aadf6e83ee7ae01ed5e6ae27"#Key to let you access to API
         # api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
