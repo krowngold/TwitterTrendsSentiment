@@ -323,10 +323,28 @@ div.trends_division {
   /* margin-left: 10pt; */
   float: left;
   text-align: center;
-  background-image: linear-gradient(to right, r);
 }
 
 .jason_image {
+  width: 200px;
+  border: 4px solid white;
+  border-radius: 50%;
+}
+
+.cssi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2pt solid black;
+  border-radius: 15pt;
+  padding: 10pt;
+  margin: 50px 50px 50px 50px;
+  float: left;
+  justify-content: center;
+  text-align: center;
+}
+
+.cssi_image_logo {
   width: 200px;
   border: 4px solid white;
   border-radius: 50%;
