@@ -15,24 +15,26 @@
       <img class="logo" src="images/earthsanity_logo.png" alt="earthsanity_logo">
       <div class="search-container">
         <form method="POST" action="/">
+
           <input type="text" placeholder="Search..." name="search">
           <button class="submit" type="submit">Submit</button>
+
         </form>
       </div>
     </div>
 
     <div class="trends_division">
-    <h1 class="trends">Here's What's Happening Right Now:</h1>
-    <div class = "top_trends">
-      <ol>
-        {% for i in range(10) %}
-        <li><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click'>{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
-        {% endfor %}
-      </ol>
+    <h1 class="trends">Here's What's Happening Right Now In {{new_location}}:</h1>
+      <div class = "top_trends">
+        <ol>
+          {% for i in range(10) %}
+          <li><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click'>{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
+          {% endfor %}
+        </ol>
+      </div>
     </div>
-  </div>
-  <div class="location_feeling">
-    <h2 class="location">Here's how {{location}} is feeling:</h2>
-  </head>
-  
+
+    <div class="location_response">
+      <h2>Here's how {{new_location}} is feeling:</h2>
+    </div>
 </html>
