@@ -101,11 +101,14 @@ class MainPage(webapp2.RequestHandler):
         results = []
         for trend in search_names:
             results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-29&count=1", return_json = True, lang = "English"))
-        for status in results:
-            temp = status["statuses"]
-            pp.pprint(temp)
-            tweet_samples.append(temp[0]["full_text"])
-            # tweet_samples.append(temp[0]["full_text"])
+
+        pp.pprint(results)
+
+        # for status in results:
+        #     temp = status["statuses"]
+        #     pp.pprint(temp)
+        #     # tweet_samples.append(temp[0]["full_text"])
+        #     tweet_samples.append(temp[0]["full_text"])
 
         template_vars = {
             "top_trends": top_trends,
@@ -131,7 +134,6 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
-
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
         api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
@@ -145,7 +147,7 @@ class MainPage(webapp2.RequestHandler):
                               "content" : element
                 }
             }
-            currentSentiment = getSentiment(packageSent)
+            currentSentiment = self.getSentiment(packageSent)
             if currentSentiment >= -1 and currentSentiment <= 1:
                 totalSentiment += currentSentiment
             else:
