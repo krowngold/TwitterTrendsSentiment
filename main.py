@@ -72,7 +72,6 @@ class MainPage(webapp2.RequestHandler):
             returnedAPI = json.loads(getSentiment.content)
             template_vars = {
                 'totalSentiment' : returnedAPI['documentSentiment']['score'],
-                'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
             }
             return template_vars['totalSentiment']
         elif getSentiment.status_code == 400:
@@ -83,6 +82,21 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
+    # def getMagnitude(self, packageSent):
+    #     api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
+    #     api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+    #     totalUrl = api_url + "?" + api_key#The total url to access the API
+    #     getSentiment = urlfetch.fetch(totalUrl,
+    #         method = urlfetch.POST,
+    #         payload = json.dumps(packageSent),
+    #         headers={'Content-Type': 'application/json'}
+    #     )
+    #     if getMagnitude.status_code == 200:
+    #         returnedMagnitude = json.loads(getMagnitude.content)
+    #         template_vars = {
+    #             'totalMagnitude' : returnedMagnitude[]
+    #         }
+    # def calculateMagnitude(self, packageSent):
 
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
@@ -176,12 +190,13 @@ class MainPage(webapp2.RequestHandler):
         print template_vars
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
         # print template_vars["sentimentValueScore"]
-        if template_vars["sentimentValueScore"] >= 0.05 and template_vars["sentimentValueScore"] <= 1.0:
+        if template_vars["sentimentValueScore"] >= 0.5 and template_vars["sentimentValueScore"] <= 10.0:
             template_vars["rating"] = "Positive"
-        elif template_vars["sentimentValueScore"] < 0.05 and template_vars["sentimentValueScore"] > -0.05:
-            template_vars["rating"] = "Neutral"
+        elif template_vars["sentimentValueScore"] < 0.5 and template_vars["sentimentValueScore"] > -0.5:
+            template_vars["rating"] = "Mixed"
         else:
             template_vars["rating"] = "Negative"
+            print "Moved to else"
         # print template_vars["rating"]
         return template_vars
     def city_search(self, input, city_list):
