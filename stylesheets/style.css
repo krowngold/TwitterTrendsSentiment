@@ -27,11 +27,11 @@ body {
 
 
 div.top_trends {
-  padding-left: 35px;
+  padding-left: 70px;
 }
 
 .logo {
-  height: 100px;
+  height: 150px;
   width: 100px;
 }
 
@@ -47,7 +47,7 @@ div.top_trends {
 }
 
 .topnav .topnav_buttons a{
-  line-height: 5;
+  line-height: 7.2;
   float: left;
   display: block;
   color: black;
@@ -278,6 +278,7 @@ div.trends_division {
   margin-right: 25pt;
   margin-left: 10pt;
   float: left;
+  width: 33%;
   justify-content: center;
   text-align: center;
 }
@@ -297,6 +298,7 @@ div.trends_division {
   border-radius: 15pt;
   padding: 10pt;
   margin-right: 25pt;
+  width: 33%;
   /* margin-left: 10pt; */
   float: left;
   text-align: center;
@@ -317,6 +319,7 @@ div.trends_division {
   border-radius: 15pt;
   padding: 10pt;
   margin-right: 10pt;
+  width: 33%;
   /* margin-left: 10pt; */
   float: left;
   text-align: center;
