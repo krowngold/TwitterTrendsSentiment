@@ -103,6 +103,8 @@ class MainPage(webapp2.RequestHandler):
         rating = ""
         errorAmount = 0
         amountOfValues = len(dictionary)
+        print "Dictionary: " + str(len(dictionary))
+        print dictionary
         for key in dictionary:
             packageSent ={
                 "document" : {"type" : "PLAIN_TEXT",
@@ -115,6 +117,7 @@ class MainPage(webapp2.RequestHandler):
                 totalSentiment += currentSentiment
             else:
                 errorAmount += 1
+                print str(errorAmount)
         amountOfValues -= errorAmount
         averageSentiment = totalSentiment
         if averageSentiment > 0.05 <= 10:
@@ -133,7 +136,7 @@ class MainPage(webapp2.RequestHandler):
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
         # print trends
         top_trends = []
-        while len(top_trends) < 10:
+        while len(top_trends) < 5:
             max = trends[0]
             temp = 0
             for i in range(len(trends)):
@@ -159,28 +162,18 @@ class MainPage(webapp2.RequestHandler):
         tweet_samples = []
         results = []
         for trend in search_names:
-            for i in range(5):
                 results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31", return_json = True, lang = "English"))
 
-        print "\n\n\nRESULTS\n"
+        print "\n\nRESULTS\n"
         pp.pprint(results)
 
         tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
-                if (len(status["statuses"]) > 0):
-                    if (len(status["statuses"][0]) > 0):
-                        if len(status["statuses"][0]["full_text"]) > 0:
-                            if trend.name in status["statuses"][0]["full_text"]:
-                                temp = status["statuses"]
-                                if not temp:
-                                    print "exiting status[statuses]"
-                                elif not temp[0]:
-                                    print "exiting dictionary"
-                                elif not temp[0]["full_text"]:
-                                    print "no text in this status"
-                                else:
-                                    tweet_dictionary[trend.name] = temp[0]["full_text"]
+                print "Checking length of status"
+                if (len(status["statuses"]) > 0) and (len(status["statuses"][0]) > 0) and len(status["statuses"][0]["full_text"]) > 0:
+                    tweet_dictionary[trend.name] = status["statuses"][0]["full_text"]
+
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
@@ -199,16 +192,19 @@ class MainPage(webapp2.RequestHandler):
             print "Moved to else"
         # print template_vars["rating"]
         return template_vars
+
     def city_search(self, input, city_list):
         for city in city_list:
             if city["name"] == input:
                 return True
         return False
+
     def city_code(self, input, city_list):
         for city in city_list:
             if city["name"] == input:
                 return city["woeid"]
         return 1
+
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
@@ -216,6 +212,7 @@ class MainPage(webapp2.RequestHandler):
         print template_vars["sentimentValueScore"]
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
+
     def post(self):
         user_search = self.request.get("search")
         if (self.city_search(user_search, city_ids)):
@@ -226,10 +223,12 @@ class MainPage(webapp2.RequestHandler):
         template_vars.update()
         template = jinja_env.get_template("templates/main.html")
         self.response.write(template.render(template_vars))
+
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs),
