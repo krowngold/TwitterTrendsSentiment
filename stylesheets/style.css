@@ -1,7 +1,7 @@
 /* Main Page */
 
 body {
-  background: linear-gradient(271deg, #232fdf, #18e6e8, #e82914);
+  background: linear-gradient(45deg, #f6f0e2, #f7dda1, #ff746d, #998970, #528a9a);
   background-size: 600% 600%;
   -webkit-animation: AnimationName 21s ease infinite;
   -moz-animation: AnimationName 21s ease infinite;
@@ -31,7 +31,7 @@ div.top_trends {
 }
 
 .logo {
-  height: 150px;
+  height: 130px;
   width: 100px;
 }
 
@@ -40,30 +40,48 @@ div.top_trends {
   justify-content: space-between;
   overflow: hidden;
   background-color: #e9e9e9;
-  border-radius: 30px;
-  /* position: fixed; /* Set the navbar to fixed position */ */
-  /* top: 0; /* Position the navbar at the top of the page */ */
-  /* width: 100%; /* Full width */ */
+  border-radius: 15px;
+  height: 80px;
+  margin-bottom: 20px;
+  align-items: center;
+  box-shadow: 5px 5px 15px;
+  /* margin-right: 20px; */
 }
 
 .topnav .topnav_buttons a{
-  line-height: 7.2;
+  line-height: 4;
   float: left;
-  display: block;
+  display: inline-flex;
+  font: Futura, sans-serif;
   color: black;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 20px;
 }
 
 .topnav_buttons {
-  width: 30%;
+  width: 50%;
 }
 
 .active {
-  background-color: #2196F3;
-  transition: background-color 0.5s ease-out;
+  background-color: #e9e9e9;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.active:hover {
+  background-color: #F17D80;
+  color: white;
+}
+
+div.grow {
+  margin-left: 110px;
+  margin-top: 80px;
+  transition: all .2s ease-in-out;
+}
+
+div.grow:hover {
+  transform: scale(1.3);
 }
 
 li {
@@ -76,11 +94,6 @@ li.grow{
 
 li:hover {
   transform: scale(1.1);
-}
-
-.active:hover {
-  background-color: #8B0000;
-  color: black;
 }
 
 .search-container {
@@ -129,12 +142,12 @@ div.trends_division {
 
 .aboutus {
   background-color: #e9e9e9;
-  transition: background-color 0.5s ease-out;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .aboutus:hover {
-  background: #ddd;
-  color: black;
+  background-color: #F17D80;
+  color: white;
 
 }
 
@@ -165,17 +178,25 @@ div.trends_division {
 
 }
 
+.box_container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .location_response {
+  display: flex;
   float: right;
-  height: 100px;
+  height: 100%;
   border: 2px solid black;
-  box-shadow: 5px 5px;
+  box-shadow: 5px 5px 15px grey;;
   border-radius: 20px;
   text-align: center;
+  align-items: center;
   background-color: #6495ED;
   margin-top: 10%;
   margin-bottom: 20%;
-  /* margin-right: 20%; */
+  margin-right: 5%;
   margin-left: 20%;
 
 }
@@ -188,9 +209,19 @@ div.trends_division {
   box-shadow: 10px 10px 5px grey;
 
 }
-
+@keyframes floatDown {
+  0% {
+    top: 0;
+  }
+  100%{
+    top: 10%;
+  }
+}
 
 .alert {
+  width: 1620px;
+  display: flex;
+  justify-content: center;
   padding: 20px;
   text-align: center;
   background-color: #f44336;
@@ -198,10 +229,14 @@ div.trends_division {
   margin-top: 15px;
   margin-bottom: 15px;
   border-radius: 14px;
+  animation: floatDown 1s;
+  animation-iteration-count: 1;
+  position: absolute;
 }
 
-
 .closebtn {
+  display: flex;
+  justify-content: flex-start;
   margin-left: 15px;
   color: white;
   font-weight: bold;
