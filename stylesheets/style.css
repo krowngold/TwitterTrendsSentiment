@@ -379,6 +379,42 @@ div.trends_division {
   text-align: center;
 }
 
+.item.active {
+  position: relative;
+  opacity: 100;
+  transform: translateX(0px);
+}
+
+.inactive.left {
+  transform: translateX(-300px);
+}
+
+.inactive.right {
+  transform: translateX(300px);
+
+}
+
+.inactive {
+  position: absolute;
+  z-index: -100;
+  opacity: 0;
+  /* height: 0; */
+  width: 0;
+  border: none;
+}
+
+.item {
+  transition: transform .5s;
+  transition: opacity .7s;
+}
+
+.slides_button {
+  display: flex;
+  border: 1px solid black;
+  width: 100px;
+  height: 100px;
+}
+
 .cssi_image_logo {
   width: 200px;
   border: 4px solid black;
