@@ -5,45 +5,34 @@
     <title>Trends</title>
     <link rel ="stylesheet" href = "/stylesheets/style.css">
   </head>
+
   <body>
     <div class="topnav">
       <div class="topnav_buttons">
         <a class="active" href="/">Home</a>
         <a class="aboutus" href="/aboutus">About The Creators</a>
       </div>
-      <img class="logo" src="images/theLogo.png" alt="earthsanity_logo">
+      <img class="logo" src="images/logo.png" alt="earthsanity_logo">
       <div class="search-container">
         <form method="POST" action="/">
 
           <input type="text" placeholder="Search..." name="search">
           <button class="submit" type="submit">Submit</button>
-     <div class="topnav_buttons">
-       <a class="active" href="/">Home</a>
-       <a class="aboutus" href="/aboutus">About The Creators</a>
-     </div>
-     <img class="logo" src="images/earthsanity_logo.png" alt="earthsanity_logo">
-     <div class="search-container">
-       <form method="POST" action="/">
 
-         <input type="text" placeholder="Search..." name="search">
-         <button class="submit" type="submit">Submit</button>
-
-       </form>
-     </div>
-   </div>
-
-    {% if user_search %}
-    <div class="alert">
-      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-      Either the town is too small or does not exist. Here's United States though....
+        </form>
+      </div>
     </div>
-    {% endif %}
+
+    <!-- <div class="redirect">
+      <h1>So there's a city called {{user_search}}? Here's United States though....</h1>
+    </div> -->
+
     <div class="trends_division">
     <h1 class="trends">Here's What's Happening Right Now In {{new_location}}:</h1>
       <div class = "top_trends">
         <ol>
           {% for i in range(10) %}
-          <li class = "grow"><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click' target = "_blank">{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
+          <li class = "grow"><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click'>{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
           {% endfor %}
         </ol>
       </div>
@@ -54,5 +43,5 @@
     </div>
     <script src="js/stylefire.js" charset="utf-8"></script>
       <!-- <script src="/js/popup.js" type="text/javascript"></script> -->
-  </body>
-</html>
+    </body>
+    </html>

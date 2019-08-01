@@ -62,7 +62,6 @@ class MainPage(webapp2.RequestHandler):
         errorCheck = 2
         print packageSent
         print "\n"
-        print json.dumps(packageSent)
         getSentiment = urlfetch.fetch(totalUrl,
             method = urlfetch.POST,
             payload = json.dumps(packageSent),
@@ -83,7 +82,7 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
-            
+
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
         rating = ""
@@ -99,11 +98,12 @@ class MainPage(webapp2.RequestHandler):
             }
             currentSentiment = self.getSentiment(packageSent)
             if currentSentiment >= -1 and currentSentiment <= 1:
-                totalSentiment += currentSentiment
                 print currentSentiment
+                totalSentiment += currentSentiment
             else:
                 errorAmount += 1
         amountOfValues -= errorAmount
+        print amountOfValues
         # print errorAmount
         averageSentiment = totalSentiment
         # print averageSentiment
@@ -173,7 +173,7 @@ class MainPage(webapp2.RequestHandler):
             "tweet_dictionary": tweet_dictionary,
             "new_location": location
         }
-
+        print template_vars
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
         # print template_vars["sentimentValueScore"]
         if template_vars["sentimentValueScore"] >= 0.05 and template_vars["sentimentValueScore"] <= 1.0:
