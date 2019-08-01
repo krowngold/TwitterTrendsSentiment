@@ -74,7 +74,7 @@ class MainPage(webapp2.RequestHandler):
                 'totalSentiment' : returnedAPI['documentSentiment']['score'],
                 'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
             }
-            return template_vars['totalSentiment']
+            return template_vars
         elif getSentiment.status_code == 400:
             message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
             print message
@@ -83,24 +83,45 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
+    # def getMagnitude(self, packageSent):
+    #     api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
+    #     api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
+    #     totalUrl = api_url + "?" + api_key#The total url to access the API
+    #     getSentiment = urlfetch.fetch(totalUrl,
+    #         method = urlfetch.POST,
+    #         payload = json.dumps(packageSent),
+    #         headers={'Content-Type': 'application/json'}
+    #     )
+    #     if getMagnitude.status_code == 200:
+    #         returnedMagnitude = json.loads(getMagnitude.content)
+    #         template_vars = {
+    #             'totalMagnitude' : returnedMagnitude[]
+    #         }
+    # def calculateMagnitude(self, packageSent):
 
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
         rating = ""
         errorAmount = 0
         amountOfValues = len(dictionary)
+        print "Dictionary: " + str(len(dictionary))
+        print dictionary
         for key in dictionary:
             packageSent ={
                 "document" : {"type" : "PLAIN_TEXT",
                               "content" : dictionary[key]
                 }
             }
-            currentSentiment = self.getSentiment(packageSent)
+            notCurrentSentiment = self.getSentiment(packageSent)
+            currentSentiment = notCurrentSentiment['totalSentiment']
+            currentMagnitude = notCurrentSentiment['totalMagnitude']
             if currentSentiment >= -1 and currentSentiment <= 1:
                 print currentSentiment
+                print currentMagnitude
                 totalSentiment += currentSentiment
             else:
                 errorAmount += 1
+                print str(errorAmount)
         amountOfValues -= errorAmount
         averageSentiment = totalSentiment
         if averageSentiment > 0.05 <= 10:
@@ -119,7 +140,7 @@ class MainPage(webapp2.RequestHandler):
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
         # print trends
         top_trends = []
-        while len(top_trends) < 10:
+        while len(top_trends) < 5:
             max = trends[0]
             temp = 0
             for i in range(len(trends)):
@@ -145,28 +166,18 @@ class MainPage(webapp2.RequestHandler):
         tweet_samples = []
         results = []
         for trend in search_names:
-            for i in range(5):
                 results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31", return_json = True, lang = "English"))
 
-        print "\n\n\nRESULTS\n"
+        print "\n\nRESULTS\n"
         pp.pprint(results)
 
         tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
-                if (len(status["statuses"]) > 0):
-                    if (len(status["statuses"][0]) > 0):
-                        if len(status["statuses"][0]["full_text"]) > 0:
-                            if trend.name in status["statuses"][0]["full_text"]:
-                                temp = status["statuses"]
-                                if not temp:
-                                    print "exiting status[statuses]"
-                                elif not temp[0]:
-                                    print "exiting dictionary"
-                                elif not temp[0]["full_text"]:
-                                    print "no text in this status"
-                                else:
-                                    tweet_dictionary[trend.name] = temp[0]["full_text"]
+                print "Checking length of status"
+                if (len(status["statuses"]) > 0) and (len(status["statuses"][0]) > 0) and len(status["statuses"][0]["full_text"]) > 0:
+                    tweet_dictionary[trend.name] = status["statuses"][0]["full_text"]
+
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
@@ -176,24 +187,28 @@ class MainPage(webapp2.RequestHandler):
         print template_vars
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
         # print template_vars["sentimentValueScore"]
-        if template_vars["sentimentValueScore"] >= 0.05 and template_vars["sentimentValueScore"] <= 1.0:
+        if template_vars["sentimentValueScore"] >= 0.5 and template_vars["sentimentValueScore"] <= 10.0:
             template_vars["rating"] = "Positive"
-        elif template_vars["sentimentValueScore"] < 0.05 and template_vars["sentimentValueScore"] > -0.05:
-            template_vars["rating"] = "Neutral"
+        elif template_vars["sentimentValueScore"] < 0.5 and template_vars["sentimentValueScore"] > -0.5:
+            template_vars["rating"] = "Mixed"
         else:
             template_vars["rating"] = "Negative"
+            print "Moved to else"
         # print template_vars["rating"]
         return template_vars
+
     def city_search(self, input, city_list):
         for city in city_list:
             if city["name"] == input:
                 return True
         return False
+
     def city_code(self, input, city_list):
         for city in city_list:
             if city["name"] == input:
                 return city["woeid"]
         return 1
+
     def get(self):
         print "\n\n\nIN MAIN PAGE\n\n\n"
         template_vars = self.loadTrends()
@@ -201,6 +216,7 @@ class MainPage(webapp2.RequestHandler):
         print template_vars["sentimentValueScore"]
         template = jinja_env.get_template('templates/main.html')
         self.response.write(template.render(template_vars))
+
     def post(self):
         user_search = self.request.get("search")
         if (self.city_search(user_search, city_ids)):
@@ -211,11 +227,13 @@ class MainPage(webapp2.RequestHandler):
         template_vars.update()
         template = jinja_env.get_template("templates/main.html")
         self.response.write(template.render(template_vars))
+
 class AboutUs(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('templates/aboutus.html')
         self.response.write(template.render())
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs),
-], debug=True)
+])
