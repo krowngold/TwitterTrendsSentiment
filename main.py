@@ -62,7 +62,6 @@ class MainPage(webapp2.RequestHandler):
         api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
         totalUrl = api_url + "?" + api_key#The total url to access the API
         errorCheck = 2
-        print packageSent
         print "\n"
         print json.dumps(packageSent)
         getSentiment = urlfetch.fetch(totalUrl,
@@ -114,6 +113,7 @@ class MainPage(webapp2.RequestHandler):
         else:
             print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
             return averageSentiment
+
     def loadTrends(self, code=23424977, location = "Seattle"):
         pp = pprint.PrettyPrinter(indent=4)
         trends = api.GetTrendsWoeid(code, exclude = None)
@@ -151,17 +151,17 @@ class MainPage(webapp2.RequestHandler):
         for trend in top_trends:
             for status in results:
                 print "\n\n NEW STATUS \n\n"
-                print status["statuses"][0]
+                # print status["statuses"][0]
                 if trend.name in status["statuses"][0]["full_text"]:
                     temp = status["statuses"]
-                    if not temp:
-                        print "exiting status[statuses]"
-                    elif not temp[0]:
-                        print "exiting dictionary"
-                    elif not temp[0]["full_text"]:
-                        print "no text in this status"
-                    else:
-                        tweet_dictionary[trend.name] = temp[0]["full_text"]
+                    # if not temp:
+                    #     print "exiting status[statuses]"
+                    # elif not temp[0]:
+                    #     print "exiting dictionary"
+                    # elif not temp[0]["full_text"]:
+                    #     print "no text in this status"
+                    # else:
+                    tweet_dictionary[trend.name] = temp[0]["full_text"]
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
