@@ -72,8 +72,9 @@ class MainPage(webapp2.RequestHandler):
             returnedAPI = json.loads(getSentiment.content)
             template_vars = {
                 'totalSentiment' : returnedAPI['documentSentiment']['score'],
+                'totalMagnitude' : returnedAPI['documentSentiment']['magnitude']
             }
-            return template_vars['totalSentiment']
+            return template_vars
         elif getSentiment.status_code == 400:
             message = "Invalid Value/Input, please try again" + str(getSentiment.status_code) + "  " + str(getSentiment.content)
             print message
@@ -109,9 +110,12 @@ class MainPage(webapp2.RequestHandler):
                               "content" : dictionary[key]
                 }
             }
-            currentSentiment = self.getSentiment(packageSent)
+            notCurrentSentiment = self.getSentiment(packageSent)
+            currentSentiment = notCurrentSentiment['totalSentiment']
+            currentMagnitude = notCurrentSentiment['totalMagnitude']
             if currentSentiment >= -1 and currentSentiment <= 1:
                 print currentSentiment
+                print currentMagnitude
                 totalSentiment += currentSentiment
             else:
                 errorAmount += 1
@@ -233,4 +237,4 @@ class AboutUs(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/aboutus', AboutUs),
-], debug=True)
+])
