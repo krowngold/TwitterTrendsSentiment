@@ -89,8 +89,6 @@ class MainPage(webapp2.RequestHandler):
         totalMagnitude = 0
         currentBothMultiplied = 0
         amountOfValues = len(dictionary)
-        print "Dictionary: " + str(len(dictionary))
-        # print dictionary
         for key in dictionary:
             packageSent ={
                 "document" : {"type" : "PLAIN_TEXT",
@@ -113,23 +111,12 @@ class MainPage(webapp2.RequestHandler):
                 print currentBothMultiplied
             else:
                 print str(errorAmount)
-        # returnValue = [addedup, totalSentiment]
         return currentBothMultiplied
-        # if totalSentiment > 0.05 <= 10:
-        #     return totalSentiment
-        # elif totalSentiment < 0.05 and totalSentiment > -0.05:
-        #     return totalSentiment
-        # elif totalSentiment < -0.05:
-        #     return averageSentiment
-        # else:
-        #     print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
-        #     return averageSentiment
 
     def loadTrends(self, code=23424977, location = "Seattle"):
         pp = pprint.PrettyPrinter(indent=4)
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
-        # print trends
         top_trends = []
         while len(top_trends) < 5:
             max = trends[0]
@@ -141,7 +128,6 @@ class MainPage(webapp2.RequestHandler):
             trends.pop(temp)
             top_trends.append(max)
 
-        # print top_trends
         search_names = []
         for trend in top_trends:
             new_string = trend.name
@@ -154,20 +140,19 @@ class MainPage(webapp2.RequestHandler):
             new_string = ''.join(string_array)
             search_names.append(new_string)
 
+
         tweet_samples = []
         results = []
         for trend in search_names:
-                results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31", return_json = True, lang = "English"))
-
-        print "\n\nRESULTS\n"
-        pp.pprint(results)
+            test = api.GetSearch(raw_query="q="+trend+"%20lang%3Aen&result_type=popular&since=2019-07-31", return_json = True)
+            results.append(test)
 
         tweet_dictionary = {}
-        for trend in top_trends:
-            for status in results:
-                print "Checking length of status"
-                if (len(status["statuses"]) > 0) and (len(status["statuses"][0]) > 0) and len(status["statuses"][0]["full_text"]) > 0:
-                    tweet_dictionary[trend.name] = status["statuses"][0]["full_text"]
+        for i in range(len(search_names)):
+            trend = top_trends[i]
+            status = results[i]
+            if (len(status["statuses"]) > 0) and (len(status["statuses"][0]) > 0) and len(status["statuses"][0]["full_text"]) > 0:
+                tweet_dictionary[trend.name] = status["statuses"][0]["full_text"]
 
         template_vars = {
             "top_trends": top_trends,
@@ -175,7 +160,6 @@ class MainPage(webapp2.RequestHandler):
             "tweet_dictionary": tweet_dictionary,
             "new_location": location
         }
-        print template_vars
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
         # print template_vars["sentimentValueScore"]
         if template_vars["sentimentValueScore"] >= 0.5 and template_vars["sentimentValueScore"] <= 10.0:
