@@ -12,17 +12,27 @@
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
+
   <body>
     <div class="topnav">
       <div class="topnav_buttons">
         <a class="active" href="/">Home</a>
         <a class="aboutus" href="/aboutus">About The Creators</a>
       </div>
-      <img class="logo" src="images/theLogo.png" alt="earthsanity_logo">
+      <img class="logo" src="images/logo.png" alt="earthsanity_logo">
       <div class="search-container">
         <form method="POST" action="/">
           <input type="text" placeholder="Search..." name="search">
           <button class="submit" type="submit">Submit</button>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- <div class="redirect">
+      <h1>So there's a city called {{user_search}}? Here's United States though....</h1>
+    </div> -->
+
       </div>
    </div>
 
@@ -37,7 +47,7 @@
       <div class = "top_trends">
         <ol>
           {% for i in range(10) %}
-          <li class = "grow"><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click' target = "_blank">{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
+          <li class = "grow"><a href = 'https://twitter.com/search?q="{{search_names[i]}}"&src=trend_click'>{{top_trends[i].name}}</a>: {{top_trends[i].tweet_volume}} tweets</li>
           {% endfor %}
         </ol>
       </div>
@@ -48,5 +58,5 @@
     </div>
     <script type="text/javascript" src="js/materialize.js"></script>
       <!-- <script src="/js/popup.js" type="text/javascript"></script> -->
-  </body>
-</html>
+    </body>
+    </html>

@@ -63,7 +63,6 @@ class MainPage(webapp2.RequestHandler):
         totalUrl = api_url + "?" + api_key#The total url to access the API
         errorCheck = 2
         print "\n"
-        print json.dumps(packageSent)
         getSentiment = urlfetch.fetch(totalUrl,
             method = urlfetch.POST,
             payload = json.dumps(packageSent),
@@ -98,8 +97,8 @@ class MainPage(webapp2.RequestHandler):
             }
             currentSentiment = self.getSentiment(packageSent)
             if currentSentiment >= -1 and currentSentiment <= 1:
-                totalSentiment += currentSentiment
                 print currentSentiment
+                totalSentiment += currentSentiment
             else:
                 errorAmount += 1
         amountOfValues -= errorAmount
@@ -168,7 +167,7 @@ class MainPage(webapp2.RequestHandler):
             "tweet_dictionary": tweet_dictionary,
             "new_location": location
         }
-
+        print template_vars
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
         # print template_vars["sentimentValueScore"]
         if template_vars["sentimentValueScore"] >= 0.05 and template_vars["sentimentValueScore"] <= 1.0:
