@@ -15,6 +15,8 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 jinja_env = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)))
+
+
 '''
     Unpacking twitter credentials and retrieving woeid numbers from separate json files
 '''
@@ -55,7 +57,7 @@ class Location(ndb.Model):
     All handlers for the website
 '''
 class MainPage(webapp2.RequestHandler):
-    def getSentiment(self,packageSent):
+    def getSentiment(self, packageSent):
         api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
         api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
         totalUrl = api_url + "?" + api_key#The total url to access the API
@@ -83,14 +85,12 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
-            
+
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
         rating = ""
         errorAmount = 0
         amountOfValues = len(dictionary)
-        # print amountOfValues
-        # print dictionary
         for key in dictionary:
             packageSent ={
                 "document" : {"type" : "PLAIN_TEXT",
@@ -104,9 +104,7 @@ class MainPage(webapp2.RequestHandler):
             else:
                 errorAmount += 1
         amountOfValues -= errorAmount
-        # print errorAmount
         averageSentiment = totalSentiment
-        # print averageSentiment
         if averageSentiment > 0.05 <= 10:
             return averageSentiment
         elif averageSentiment < 0.05 and averageSentiment > -0.05:
@@ -148,15 +146,12 @@ class MainPage(webapp2.RequestHandler):
         results = []
         for trend in search_names:
             results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31&count=5", return_json = True, lang = "English"))
+
         tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
-                # if len(status["statuses"]) == 0:
-                # pp.pprint(status)
-                # sys.exit()
-                # pp.pprint(type((status["statuses"])))
-                # pp.pprint(status["statuses"][0])
-                # status["statuses"][0]["full_text"]
+                print "\n\n NEW STATUS \n\n"
+                print status["statuses"][0]
                 if trend.name in status["statuses"][0]["full_text"]:
                     temp = status["statuses"]
                     if not temp:
