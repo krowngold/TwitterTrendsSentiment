@@ -63,7 +63,7 @@ div.top_trends {
 }
 
 .topnav_buttons {
-  width: 50%;
+  width: 30%;
 }
 
 .active {
@@ -412,9 +412,14 @@ div.trends_division {
 
 .slides_button {
   display: flex;
+  justify-content: center;
   border: 1px solid black;
+  border-radius: 50px;
+  margin-top: auto;
+  margin-bottom: auto;
   width: 100px;
   height: 100px;
+  flex-direction: row;
 }
 
 .cssi_image_logo {
