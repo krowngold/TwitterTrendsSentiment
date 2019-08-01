@@ -23,8 +23,9 @@
       <img class="noahs_ark" src="images/noahs_ark.jpg" alt="noahs_ark.jpg">
     </div>
 
-    <div class = "about_surround">
-      <div class = "ethan">
+    <div class = "about_surround" tabindex="0">
+      <button class="slides_button" type="button" onclick="showSlide(-1)">&lt;</button>
+      <div class = "ethan item inactive left">
         <img class="ethan_image" src="/images/ethan.jpg" alt="ethan">
         <h3>Ethan Buranday</h3>
         <p>Ethan is a Software Engineering major at Arizona State University in Tempe, AZ. He was the programming lead in Nogales High School's FRC team,
@@ -32,7 +33,7 @@
         <a href="https://github.com/ethan-buranday">Click here for Ethan's GitHub account.</a>
       </div>
 
-      <div class = "noah">
+      <div class = "noah item active">
         <img class="noah_image" src="/images/noah.jpg" alt="noah">
         <h3>Noah Krohngold</h3>
         <p>Noah is a computer science major at the University of Washington in Seattle.
@@ -41,7 +42,7 @@
         <a href="https://github.com/krowngold">Click here for Noah's GitHub account.</a>
       </div>
 
-      <div class="jason">
+      <div class="jason item inactive right">
         <img class="jason_image" src="/images/jason.jpg" alt="jason">
         <h3>Jason Li</h3>
         <p>Jason is a computer science major at the University of California, Irvine. He likes to code and enjoys playing games.
@@ -49,8 +50,8 @@
           If you wish to contact him, email him at lijason0184@gmail.com</p>
         <a href="https://github.com/TheOGKozy">Click here for Jason's GitHub account.</a>
       </div>
+      <button class="slides_button" type="button" onclick="showSlide(1)">&gt</button>
     </div>
-
     <div class="cssi">
       <img class="cssi_image_logo" src="/images/computer-science-summer-institute.jpg" alt="cssi">
       <p>Google's Computer Science Summer Institute is a three week coding bootcamp for upcoming freshmen college
@@ -61,5 +62,6 @@
       <a class="" href="https://buildyourfuture.withgoogle.com/programs/computer-science-summer-institute/#!?detail-content-tabby_activeEl=overview">Computer Science Summer Institute</a>
       <br>
     </div>
+    <script type="text/javascript" src="/js/carousel.js"></script>
   </body>
 </html>
