@@ -83,26 +83,12 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
-    # def getMagnitude(self, packageSent):
-    #     api_key = "key=AIzaSyD_CyzFIF6FHeVOC4T8BLDAoasBAvDmEmI"#Key to let you access to API
-    #     api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment"#Url To get access to Api
-    #     totalUrl = api_url + "?" + api_key#The total url to access the API
-    #     getSentiment = urlfetch.fetch(totalUrl,
-    #         method = urlfetch.POST,
-    #         payload = json.dumps(packageSent),
-    #         headers={'Content-Type': 'application/json'}
-    #     )
-    #     if getMagnitude.status_code == 200:
-    #         returnedMagnitude = json.loads(getMagnitude.content)
-    #         template_vars = {
-    #             'totalMagnitude' : returnedMagnitude[]
-    #         }
-    # def calculateMagnitude(self, packageSent):
 
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
         rating = ""
-        errorAmount = 0
+        totalMagnitude = 0
+        currentBothMultiplied = 0
         amountOfValues = len(dictionary)
         for key in dictionary:
             packageSent ={
@@ -114,29 +100,24 @@ class MainPage(webapp2.RequestHandler):
             currentSentiment = notCurrentSentiment['totalSentiment']
             currentMagnitude = notCurrentSentiment['totalMagnitude']
             if currentSentiment >= -1 and currentSentiment <= 1:
-                print currentSentiment
+                # print currentSentiment
+                # print currentMagnitude
                 print currentMagnitude
-                totalSentiment += currentSentiment
+                print currentSentiment
+                currentBothMultiplied += (currentSentiment * currentMagnitude)
+                # totalSentiment += currentSentiment
+                # totalMagnitude += currentMagnitude
+                # print totalSentiment
+                # print totalMagnitude
+                print currentBothMultiplied
             else:
-                errorAmount += 1
                 print str(errorAmount)
-        amountOfValues -= errorAmount
-        averageSentiment = totalSentiment
-        if averageSentiment > 0.05 <= 10:
-            return averageSentiment
-        elif averageSentiment < 0.05 and averageSentiment > -0.05:
-            return averageSentiment
-        elif averageSentiment < -0.05:
-            return averageSentiment
-        else:
-            print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
-            return averageSentiment
+        return currentBothMultiplied
 
     def loadTrends(self, code=23424977, location = "Seattle"):
         pp = pprint.PrettyPrinter(indent=4)
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
-        # print trends
         top_trends = []
         while len(top_trends) < 5:
             max = trends[0]
@@ -148,7 +129,6 @@ class MainPage(webapp2.RequestHandler):
             trends.pop(temp)
             top_trends.append(max)
 
-        # print top_trends
         search_names = []
         for trend in top_trends:
             new_string = trend.name
@@ -166,10 +146,6 @@ class MainPage(webapp2.RequestHandler):
         results = []
         for trend in search_names:
             test = api.GetSearch(raw_query="q="+trend+"%20lang%3Aen&result_type=popular&since=2019-07-31", return_json = True)
-            # print "TREND\n\n\n\n"
-            # pp.pprint(trend)
-            # print "\n\n\nTEST\n\n\n"
-            # pp.pprint(test)
             results.append(test)
 
         tweet_dictionary = {}
@@ -178,17 +154,6 @@ class MainPage(webapp2.RequestHandler):
             status = results[i]
             if (len(status["statuses"]) > 0) and (len(status["statuses"][0]) > 0) and len(status["statuses"][0]["full_text"]) > 0:
                 tweet_dictionary[trend.name] = status["statuses"][0]["full_text"]
-
-        # Results and top trends should have the same trending topic at each index
-        # Go through each top trend and each tweet for each top trend and
-        # tweet_dictionary = {}
-        # for trend in top_trends:
-        #     for status in results:
-        #         # print "\n\nSTATUS\n\n"s
-        #         # print "\n\n"+trend.name+"\n\n"
-        #         # pp.pprint(status["statuses"])
-        #         if (len(status["statuses"]) > 0) and (len(status["statuses"][0]) > 0) and len(status["statuses"][0]["full_text"]) > 0:
-        #             tweet_dictionary[trend.name] = status["statuses"][0]["full_text"]
 
         template_vars = {
             "top_trends": top_trends,
