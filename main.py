@@ -102,10 +102,11 @@ class MainPage(webapp2.RequestHandler):
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
         rating = ""
-        errorAmount = 0
+        totalMagnitude = 0
+        currentBothMultiplied = 0
         amountOfValues = len(dictionary)
         print "Dictionary: " + str(len(dictionary))
-        print dictionary
+        # print dictionary
         for key in dictionary:
             packageSent ={
                 "document" : {"type" : "PLAIN_TEXT",
@@ -116,23 +117,29 @@ class MainPage(webapp2.RequestHandler):
             currentSentiment = notCurrentSentiment['totalSentiment']
             currentMagnitude = notCurrentSentiment['totalMagnitude']
             if currentSentiment >= -1 and currentSentiment <= 1:
-                print currentSentiment
+                # print currentSentiment
+                # print currentMagnitude
                 print currentMagnitude
-                totalSentiment += currentSentiment
+                print currentSentiment
+                currentBothMultiplied += (currentSentiment * currentMagnitude)
+                # totalSentiment += currentSentiment
+                # totalMagnitude += currentMagnitude
+                # print totalSentiment
+                # print totalMagnitude
+                print currentBothMultiplied
             else:
-                errorAmount += 1
                 print str(errorAmount)
-        amountOfValues -= errorAmount
-        averageSentiment = totalSentiment
-        if averageSentiment > 0.05 <= 10:
-            return averageSentiment
-        elif averageSentiment < 0.05 and averageSentiment > -0.05:
-            return averageSentiment
-        elif averageSentiment < -0.05:
-            return averageSentiment
-        else:
-            print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
-            return averageSentiment
+        # returnValue = [addedup, totalSentiment]
+        return currentBothMultiplied
+        # if totalSentiment > 0.05 <= 10:
+        #     return totalSentiment
+        # elif totalSentiment < 0.05 and totalSentiment > -0.05:
+        #     return totalSentiment
+        # elif totalSentiment < -0.05:
+        #     return averageSentiment
+        # else:
+        #     print "Something went wrong, Call either Jason, Noah or Ethan for fix(Not Free)"
+        #     return averageSentiment
 
     def loadTrends(self, code=23424977, location = "Seattle"):
         pp = pprint.PrettyPrinter(indent=4)
