@@ -141,26 +141,32 @@ class MainPage(webapp2.RequestHandler):
                     string_array[i] = "%23"
             new_string = ''.join(string_array)
             search_names.append(new_string)
+
         tweet_samples = []
         results = []
         for trend in search_names:
-            results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31&count=5", return_json = True, lang = "English"))
+            for i in range(5):
+                results.append(api.GetSearch(raw_query="q=" + trend + "&result_type=popular&since=2019-07-31", return_json = True, lang = "English"))
+
+        print "\n\n\nRESULTS\n"
+        pp.pprint(results)
 
         tweet_dictionary = {}
         for trend in top_trends:
             for status in results:
-                print "\n\n NEW STATUS \n\n"
-                # print status["statuses"][0]
-                if trend.name in status["statuses"][0]["full_text"]:
-                    temp = status["statuses"]
-                    # if not temp:
-                    #     print "exiting status[statuses]"
-                    # elif not temp[0]:
-                    #     print "exiting dictionary"
-                    # elif not temp[0]["full_text"]:
-                    #     print "no text in this status"
-                    # else:
-                    tweet_dictionary[trend.name] = temp[0]["full_text"]
+                if (len(status["statuses"]) > 0):
+                    if (len(status["statuses"][0]) > 0):
+                        if len(status["statuses"][0]["full_text"]) > 0:
+                            if trend.name in status["statuses"][0]["full_text"]:
+                                temp = status["statuses"]
+                                if not temp:
+                                    print "exiting status[statuses]"
+                                elif not temp[0]:
+                                    print "exiting dictionary"
+                                elif not temp[0]["full_text"]:
+                                    print "no text in this status"
+                                else:
+                                    tweet_dictionary[trend.name] = temp[0]["full_text"]
         template_vars = {
             "top_trends": top_trends,
             "search_names": search_names,
