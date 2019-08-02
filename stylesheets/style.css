@@ -440,8 +440,19 @@ div.trends_division {
 .slides_button {
   display: flex;
   border: 1px solid black;
+  border-radius: 50%;
+  justify-content: center;
   width: 100px;
   height: 100px;
+}
+
+.about_surround_button {
+  margin: auto;
+  /* width: 100px;  */
+  height: 100px;
+  position: relative;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
 }
 
 .cssi_image_logo {
