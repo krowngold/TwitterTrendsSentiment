@@ -7,6 +7,7 @@ import twitter
 import sys
 import pprint
 import simplejson
+import datetime
 from google.appengine.api import users
 from google.appengine.ext import ndb
 import urllib
@@ -43,16 +44,18 @@ def split(word):
 '''
     All the models for the website. Not sure if we're going to implement them.
 '''
-class Tweet(ndb.Model):
-    text = ndb.StringProperty(required = True)
-    date = ndb.StringProperty(required = True)
 
 class Trend(ndb.Model):
     title = ndb.StringProperty(required = True)
     num_tweets = ndb.IntegerProperty(required = True)
-    date = ndb.StringProperty(required = True)
+    tweet = ndb.StringProperty(required = True)
+
 class Location(ndb.Model):
     name = ndb.StringProperty(required = True)
+    trend_keys = ndb.KeyProperty(kind=Trend, required=False, repeated=True)
+    date = ndb.DateProperty(required = True)
+
+
 '''
     All handlers for the website
 '''
@@ -113,8 +116,7 @@ class MainPage(webapp2.RequestHandler):
                 print str(errorAmount)
         return currentBothMultiplied
 
-    def loadTrends(self, code=23424977, location = "Seattle"):
-        pp = pprint.PrettyPrinter(indent=4)
+    def topTrending(self, code):
         trends = api.GetTrendsWoeid(code, exclude = None)
         trends.sort(key = lambda x: x.tweet_volume, reverse = True)
         top_trends = []
@@ -127,9 +129,11 @@ class MainPage(webapp2.RequestHandler):
                     temp = i
             trends.pop(temp)
             top_trends.append(max)
+        return top_trends
 
+    def tweetURL(self, trending):
         search_names = []
-        for trend in top_trends:
+        for trend in trending:
             new_string = trend.name
             string_array = split(new_string)
             for i in range(len(string_array)):
@@ -139,38 +143,80 @@ class MainPage(webapp2.RequestHandler):
                     string_array[i] = "%23"
             new_string = ''.join(string_array)
             search_names.append(new_string)
+        return search_names
 
-
-        tweet_samples = []
-        results = []
-        for trend in search_names:
+    def getTweets(self, search):
+        resultsAnswer = []
+        for trend in search:
             test = api.GetSearch(raw_query="q="+trend+"%20lang%3Aen&result_type=popular&since=2019-07-31", return_json = True)
-            results.append(test)
+            resultsAnswer.append(test)
+        return resultsAnswer
 
+    def retrieveTweets(self, topTrends, search, resultList, location):
         tweet_dictionary = {}
-        for i in range(len(search_names)):
-            trend = top_trends[i]
-            status = results[i]
+        trend_list = []
+        for i in range(len(search)):
+            trend = topTrends[i]
+            status = resultList[i]
             if (len(status["statuses"]) > 0) and (len(status["statuses"][0]) > 0) and len(status["statuses"][0]["full_text"]) > 0:
-                tweet_dictionary[trend.name] = status["statuses"][0]["full_text"]
+                status_to_use =  status["statuses"][0]["full_text"]
+            else:
+                status_to_use = ""
+            tweet_dictionary[trend.name] = status_to_use
+            trend_key = Trend(title = topTrends[i].name, num_tweets = topTrends[i].tweet_volume, tweet = status_to_use).put()
+            trend_list.append(trend_key)
+        location_key = Location(name = location, trend_keys = trend_list, date = datetime.datetime.now()).put()
+        return tweet_dictionary
 
-        template_vars = {
-            "top_trends": top_trends,
-            "search_names": search_names,
-            "tweet_dictionary": tweet_dictionary,
-            "new_location": location,
-        }
-        template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
-        # print template_vars["sentimentValueScore"]
-        if template_vars["sentimentValueScore"] >= 0.5 and template_vars["sentimentValueScore"] <= 10.0:
-            template_vars["rating"] = "Positive"
-        elif template_vars["sentimentValueScore"] < 0.5 and template_vars["sentimentValueScore"] > -0.5:
-            template_vars["rating"] = "Mixed"
-        else:
-            template_vars["rating"] = "Negative"
-            print "Moved to else"
-        # print template_vars["rating"]
-        return template_vars
+    def loadTrends(self, code=23424977, location = "Seattle"):
+        pp = pprint.PrettyPrinter(indent=4)
+        places = Location.query().fetch()
+        for place in places:
+            print datetime.datetime.now() == place.date
+            if location == place.name and datetime.datetime.now() == place.date:
+                location_trends = place.trend_keys
+                trending_topics = []
+                tweet_content = []
+                for key in location_trends:
+                    trending_topics.append(key.get().title)
+                searching = self.tweetURL(trending_topics)
+                for key in location_trends:
+                    tweet_content.append(key.get().tweet)
+                twt_dictionary = {}
+                for i in range(len(search)):
+                    trend = trending_topics[i]
+                    twt_dictionary[trend] = tweet_content[i]
+
+                template_vars = {
+                    "top_trends": trending_topics,
+                    "search_names": searching,
+                    "tweet_dictionary": twt_dictionary,
+                    "new_location": location
+                }
+            else:
+                top_trends = self.topTrending(code)
+                search_names = self.tweetURL(top_trends)
+                results = self.getTweets(search_names)
+
+                tweet_dictionary = self.retrieveTweets(top_trends, search_names, results, location) #returns dictionary of tweets
+
+                template_vars = {
+                    "top_trends": top_trends,
+                    "search_names": search_names,
+                    "tweet_dictionary": tweet_dictionary,
+                    "new_location": location,
+                }
+                template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
+                # print template_vars["sentimentValueScore"]
+                if template_vars["sentimentValueScore"] >= 0.5 and template_vars["sentimentValueScore"] <= 10.0:
+                    template_vars["rating"] = "Positive"
+                elif template_vars["sentimentValueScore"] < 0.5 and template_vars["sentimentValueScore"] > -0.5:
+                    template_vars["rating"] = "Mixed"
+                else:
+                    template_vars["rating"] = "Negative"
+                    print "Moved to else"
+                # print template_vars["rating"]
+                return template_vars
 
     def city_search(self, input, city_list):
         for city in city_list:
