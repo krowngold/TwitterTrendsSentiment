@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset = 'utf-8'>
     <title>Trends</title>
     <link rel ="stylesheet" href = "/stylesheets/style.css">
     <!--Import Google Icon Font-->
@@ -57,6 +57,16 @@
       <div class="location_response">
         <h2>Here's how {{new_location}} is feeling: {{rating}}<br>The calculated Average Sentiment Score is: {{sentimentValueScore}}</h2>
       </div>
+    </div>
+    <div class = "emoji_box">
+      <h1 class="emoji">{% if rating == "Positive" %}
+              😄
+            {% elif rating == "Mixed" %}
+            😒
+            {% else %}
+            👿
+          {% endif %}
+      </h1>
     </div>
     <script type="text/javascript" src="js/materialize.js"></script>
       <!-- <script src="/js/popup.js" type="text/javascript"></script> -->

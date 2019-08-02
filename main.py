@@ -159,7 +159,7 @@ class MainPage(webapp2.RequestHandler):
             "top_trends": top_trends,
             "search_names": search_names,
             "tweet_dictionary": tweet_dictionary,
-            "new_location": location
+            "new_location": location,
         }
         template_vars["sentimentValueScore"] = self.calculateSentiment(template_vars["tweet_dictionary"])
         # print template_vars["sentimentValueScore"]
