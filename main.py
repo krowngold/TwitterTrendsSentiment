@@ -83,7 +83,6 @@ class MainPage(webapp2.RequestHandler):
             message = "Something went wrong going into API" + str(getSentiment.status_code) + " " + str(getSentiment.content)
             print message
             return errorCheck
-
     def calculateSentiment(self, dictionary):
         totalSentiment = 0
         rating = ""
